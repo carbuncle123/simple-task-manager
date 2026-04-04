@@ -1,5 +1,13 @@
+import { useState } from "react";
 import { ChevronLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import type { MidTermTask } from "@simple-task-manager/shared";
+import { KanbanBoard } from "@/components/mid-term/kanban-board";
+import { MidTermTaskDialog } from "@/components/mid-term/mid-term-task-dialog";
+import { useMidTermTasks } from "@/hooks/use-mid-term-tasks";
+
+type ViewMode = "kanban" | "gantt";
 
 interface MidTermPanelProps {
   isLeftOpen: boolean;
@@ -7,6 +15,22 @@ interface MidTermPanelProps {
 }
 
 export function MidTermPanel({ isLeftOpen, onToggleLeft }: MidTermPanelProps) {
+  const [viewMode, setViewMode] = useState<ViewMode>("kanban");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<MidTermTask | null>(null);
+
+  const { data: tasks = [], isLoading } = useMidTermTasks();
+
+  const handleAddClick = () => {
+    setEditingTask(null);
+    setDialogOpen(true);
+  };
+
+  const handleCardClick = (task: MidTermTask) => {
+    setEditingTask(task);
+    setDialogOpen(true);
+  };
+
   return (
     <div className="flex flex-col overflow-hidden">
       <div className="flex items-center gap-3 mb-3">
@@ -23,27 +47,55 @@ export function MidTermPanel({ isLeftOpen, onToggleLeft }: MidTermPanelProps) {
           <span>今すぐやる</span>
         </button>
 
-        {/* View toggle placeholder */}
         <div className="flex gap-0.5 bg-muted rounded-lg p-0.5">
-          <div className="px-3 py-1 rounded-md bg-background text-sm font-medium shadow-sm">
+          <button
+            className={cn(
+              "px-3 py-1 rounded-md text-sm font-medium transition-all",
+              viewMode === "kanban"
+                ? "bg-background shadow-sm"
+                : "text-muted-foreground"
+            )}
+            onClick={() => setViewMode("kanban")}
+          >
             カンバン
-          </div>
-          <div className="px-3 py-1 rounded-md text-sm font-medium text-muted-foreground">
+          </button>
+          <button
+            className={cn(
+              "px-3 py-1 rounded-md text-sm font-medium transition-all",
+              viewMode === "gantt"
+                ? "bg-background shadow-sm"
+                : "text-muted-foreground"
+            )}
+            onClick={() => setViewMode("gantt")}
+          >
             ガントチャート
-          </div>
+          </button>
         </div>
 
         <div className="ml-auto">
-          <div className="h-8 px-3 rounded-md bg-primary text-primary-foreground text-sm flex items-center font-medium">
+          <Button size="sm" onClick={handleAddClick}>
             + タスク追加
-          </div>
+          </Button>
         </div>
       </div>
 
-      {/* Placeholder for Kanban/Gantt (Phase 4/5) */}
-      <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm border border-dashed rounded-lg">
-        中期タスク（Phase 4/5 で実装）
-      </div>
+      {isLoading ? (
+        <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
+          読み込み中...
+        </div>
+      ) : viewMode === "kanban" ? (
+        <KanbanBoard tasks={tasks} onCardClick={handleCardClick} />
+      ) : (
+        <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm border border-dashed rounded-lg">
+          ガントチャート（Phase 5 で実装）
+        </div>
+      )}
+
+      <MidTermTaskDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        task={editingTask}
+      />
     </div>
   );
 }
