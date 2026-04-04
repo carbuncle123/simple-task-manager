@@ -92,15 +92,12 @@ shortTermRoutes.put("/reorder", async (c) => {
   const body = await c.req.json();
   const parsed = reorderShortTermSchema.parse(body);
 
-  const sqliteDb = (db as unknown as { $client: { transaction: (fn: (tx: unknown) => void) => void } }).$client;
-  sqliteDb.transaction(() => {
-    for (let i = 0; i < parsed.orderedIds.length; i++) {
-      db.update(shortTermTasks)
-        .set({ displayOrder: i, updatedAt: new Date().toISOString() })
-        .where(eq(shortTermTasks.id, parsed.orderedIds[i]))
-        .run();
-    }
-  });
+  for (let i = 0; i < parsed.orderedIds.length; i++) {
+    await db
+      .update(shortTermTasks)
+      .set({ displayOrder: i, updatedAt: new Date().toISOString() })
+      .where(eq(shortTermTasks.id, parsed.orderedIds[i]));
+  }
 
   const tasks = await db
     .select()

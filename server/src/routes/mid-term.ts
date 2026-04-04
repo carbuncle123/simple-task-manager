@@ -81,23 +81,16 @@ midTermRoutes.put("/reorder", async (c) => {
   const body = await c.req.json();
   const parsed = reorderMidTermSchema.parse(body);
 
-  const sqliteDb = (
-    db as unknown as {
-      $client: { transaction: (fn: (tx: unknown) => void) => void };
-    }
-  ).$client;
-  sqliteDb.transaction(() => {
-    for (const item of parsed.items) {
-      db.update(midTermTasks)
-        .set({
-          status: item.status,
-          displayOrder: item.displayOrder,
-          updatedAt: new Date().toISOString(),
-        })
-        .where(eq(midTermTasks.id, item.id))
-        .run();
-    }
-  });
+  for (const item of parsed.items) {
+    await db
+      .update(midTermTasks)
+      .set({
+        status: item.status,
+        displayOrder: item.displayOrder,
+        updatedAt: new Date().toISOString(),
+      })
+      .where(eq(midTermTasks.id, item.id));
+  }
 
   const tasks = await db
     .select()
