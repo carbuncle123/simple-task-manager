@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { MidTermTask } from "@simple-task-manager/shared";
 import { KanbanBoard } from "@/components/mid-term/kanban-board";
+import { GanttChart } from "@/components/gantt/gantt-chart";
 import { MidTermTaskDialog } from "@/components/mid-term/mid-term-task-dialog";
 import { useMidTermTasks } from "@/hooks/use-mid-term-tasks";
 
@@ -86,9 +87,7 @@ export function MidTermPanel({ isLeftOpen, onToggleLeft }: MidTermPanelProps) {
       ) : viewMode === "kanban" ? (
         <KanbanBoard tasks={tasks} onCardClick={handleCardClick} />
       ) : (
-        <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm border border-dashed rounded-lg">
-          ガントチャート（Phase 5 で実装）
-        </div>
+        <GanttChart tasks={tasks} onTaskClick={handleCardClick} />
       )}
 
       <MidTermTaskDialog
