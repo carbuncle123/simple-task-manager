@@ -1,10 +1,16 @@
 import { cn } from "@/lib/utils";
+import { AddTaskForm } from "@/components/short-term/add-task-form";
+import { TaskList } from "@/components/short-term/task-list";
+import { useShortTermTasks } from "@/hooks/use-short-term-tasks";
 
 interface ShortTermPanelProps {
   isOpen: boolean;
 }
 
 export function ShortTermPanel({ isOpen }: ShortTermPanelProps) {
+  const { data: tasks = [], isLoading } = useShortTermTasks();
+  const todoCount = tasks.filter((t) => t.status === "todo").length;
+
   return (
     <div
       className={cn(
@@ -15,23 +21,22 @@ export function ShortTermPanel({ isOpen }: ShortTermPanelProps) {
       <div className="min-w-[250px]">
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm font-bold">今すぐやる</span>
-          <span className="text-xs text-muted-foreground">0件</span>
+          <span className="text-xs text-muted-foreground">
+            {todoCount}件
+          </span>
         </div>
 
-        {/* Placeholder for AddTaskForm (Phase 3) */}
-        <div className="flex gap-2 mb-3">
-          <div className="flex-1 h-9 rounded-md border border-input bg-background px-3 flex items-center text-sm text-muted-foreground">
-            タスクを追加...
-          </div>
-          <div className="h-9 px-3 rounded-md bg-primary text-primary-foreground text-sm flex items-center font-medium">
-            追加
-          </div>
-        </div>
+        <AddTaskForm />
 
-        {/* Placeholder for TaskList (Phase 3) */}
-        <div className="flex-1 flex items-center justify-center h-48 text-muted-foreground text-sm border border-dashed rounded-lg">
-          短期タスク（Phase 3 で実装）
-        </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
+            読み込み中...
+          </div>
+        ) : (
+          <div className="overflow-y-auto flex-1">
+            <TaskList tasks={tasks} />
+          </div>
+        )}
       </div>
     </div>
   );
