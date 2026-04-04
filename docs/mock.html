@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>タスク管理アプリ - UIモック</title>
+<style>
+  :root {
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --todo: #e2e8f0;
+    --in-progress: #bfdbfe;
+    --done: #bbf7d0;
+    --radius: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .app-shell {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .tab {
+    padding: 10px 24px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.15s;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+    font-weight: 600;
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Short-term */
+  .add-task-form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .add-task-form input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 14px;
+    outline: none;
+  }
+  .add-task-form input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(59,130,246,0.15); }
+  .add-task-form button {
+    padding: 10px 20px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .add-task-form button:hover { background: var(--primary-hover); }
+
+  .task-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    transition: box-shadow 0.15s;
+  }
+  .task-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+
+  .drag-handle {
+    cursor: grab;
+    color: var(--text-muted);
+    font-size: 16px;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    line-height: 1;
+  }
+  .drag-handle::before { content: '⠿'; font-size: 20px; }
+
+  .task-checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .task-checkbox.checked {
+    background: var(--success);
+    border-color: var(--success);
+    color: white;
+  }
+  .task-checkbox.checked::after { content: '✓'; font-size: 12px; font-weight: bold; }
+
+  .task-info { flex: 1; }
+  .task-name { font-size: 14px; font-weight: 500; }
+  .task-name.done { text-decoration: line-through; color: var(--text-muted); }
+  .task-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  .task-delete {
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 18px;
+    opacity: 0;
+    transition: opacity 0.15s;
+    background: none;
+    border: none;
+  }
+  .task-card:hover .task-delete { opacity: 1; }
+  .task-delete:hover { color: var(--danger); }
+
+  /* Expandable description */
+  .task-card { cursor: pointer; }
+  .task-card .task-desc-edit {
+    display: none;
+    margin-top: 6px;
+  }
+  .task-card.expanded .task-desc-edit {
+    display: block;
+  }
+  .task-desc-edit textarea {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 48px;
+    outline: none;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .task-desc-edit textarea:focus { border-color: var(--primary); }
+  .task-desc-edit .edit-hint {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    text-align: right;
+  }
+  .task-card.expanded {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border-color: var(--primary);
+  }
+  .task-card.expanded .task-desc { display: none; }
+
+  /* Kanban */
+  .view-toggle {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    background: var(--border);
+    border-radius: var(--radius);
+    padding: 3px;
+    width: fit-content;
+  }
+  .view-toggle button {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-muted);
+    transition: all 0.15s;
+  }
+  .view-toggle button.active {
+    background: var(--card);
+    color: var(--text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .mid-term-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .btn-add {
+    padding: 8px 16px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .kanban-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .kanban-column {
+    background: #f1f5f9;
+    border-radius: var(--radius);
+    padding: 16px;
+    min-height: 400px;
+  }
+
+  .column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .column-count {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 1px 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .kanban-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px;
+    margin-bottom: 8px;
+    cursor: grab;
+    transition: box-shadow 0.15s;
+  }
+  .kanban-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .kanban-card-name { font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+  .kanban-card-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .badge-category { background: #ede9fe; color: #7c3aed; }
+  .badge-deadline { background: #fef3c7; color: #b45309; }
+  .badge-deadline.overdue { background: #fee2e2; color: #dc2626; }
+
+  /* Gantt */
+  .gantt-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .gantt-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .gantt-nav button {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text);
+  }
+  .gantt-nav button:hover { background: #f1f5f9; }
+  .gantt-nav .gantt-period { font-size: 14px; font-weight: 600; min-width: 140px; text-align: center; }
+  .gantt-scale-toggle {
+    display: flex;
+    gap: 4px;
+    background: var(--border);
+    border-radius: var(--radius);
+    padding: 3px;
+  }
+  .gantt-scale-toggle button {
+    padding: 4px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-muted);
+    transition: all 0.15s;
+  }
+  .gantt-scale-toggle button.active {
+    background: var(--card);
+    color: var(--text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .gantt-container {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--card);
+    cursor: grab;
+    user-select: none;
+  }
+  .gantt-container.dragging { cursor: grabbing; }
+
+  .gantt-chart {
+    display: grid;
+    transition: transform 0.15s ease;
+  }
+
+  .gantt-header-row {
+    display: grid;
+    border-bottom: 2px solid var(--border);
+    background: #f8fafc;
+    position: sticky;
+    top: 0;
+  }
+  .gantt-header-label {
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+  }
+  .gantt-header-day {
+    padding: 4px 0;
+    text-align: center;
+    font-size: 10px;
+    color: var(--text-muted);
+    border-right: 1px solid #f1f5f9;
+  }
+  .gantt-header-day.today {
+    background: #eff6ff;
+    color: var(--primary);
+    font-weight: 600;
+  }
+  .gantt-header-day.weekend {
+    background: #fafafa;
+    color: #cbd5e1;
+  }
+  .gantt-month-row {
+    display: grid;
+    border-bottom: 1px solid var(--border);
+    background: #f8fafc;
+  }
+  .gantt-month-label {
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-right: 1px solid var(--border);
+  }
+  .gantt-month-span {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 4px 8px;
+    border-right: 1px solid #f1f5f9;
+  }
+
+  .gantt-task-row {
+    display: grid;
+    border-bottom: 1px solid #f1f5f9;
+    min-height: 40px;
+    align-items: center;
+  }
+  .gantt-task-row:hover { background: #fafbfc; }
+  .gantt-task-name {
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    border-right: 1px solid var(--border);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .gantt-cell {
+    border-right: 1px solid #f8fafc;
+    height: 100%;
+    position: relative;
+  }
+  .gantt-cell.weekend { background: #fafafa; }
+  .gantt-bar-container {
+    position: absolute;
+    top: 10px;
+    height: 20px;
+  }
+  .gantt-bar {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    font-size: 10px;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0 6px;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .gantt-bar.todo { background: #94a3b8; }
+  .gantt-bar.in-progress { background: var(--primary); }
+  .gantt-bar.done { background: var(--success); }
+  .gantt-bar.overdue { background: var(--danger); }
+  .gantt-today-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--danger);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* Long-term */
+  .category-group {
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #f8fafc;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    width: 100%;
+    text-align: left;
+    transition: background 0.15s;
+  }
+  .category-header:hover { background: #f1f5f9; }
+  .chevron {
+    transition: transform 0.2s;
+    color: var(--text-muted);
+  }
+  .category-group.open .chevron { transform: rotate(180deg); }
+
+  .category-items { display: none; }
+  .category-group.open .category-items { display: block; }
+
+  .long-term-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .long-term-item:hover { background: #fafbfc; }
+  .lt-info { flex: 1; }
+  .lt-name { font-size: 14px; font-weight: 500; }
+  .lt-memo { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .lt-actions {
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .long-term-item:hover .lt-actions { opacity: 1; }
+  .lt-actions button {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--text-muted);
+  }
+  .lt-actions button:hover { background: #f1f5f9; color: var(--text); }
+
+  .long-term-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  /* Dialog mock */
+  .dialog-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+  }
+  .dialog-overlay.open { display: flex; }
+  .dialog {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 24px;
+    width: 420px;
+    max-width: 90vw;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+  .dialog h2 { font-size: 18px; margin-bottom: 16px; }
+  .dialog label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px; margin-top: 12px; }
+  .dialog input, .dialog textarea, .dialog select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    font-family: inherit;
+  }
+  .dialog input:focus, .dialog textarea:focus { border-color: var(--primary); }
+  .dialog textarea { resize: vertical; min-height: 80px; }
+  .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .dialog-actions button {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .btn-cancel { background: var(--card); border: 1px solid var(--border); color: var(--text); }
+  .btn-submit { background: var(--primary); border: none; color: white; }
+
+  /* Combined view */
+  .combined-layout {
+    display: grid;
+    gap: 20px;
+    height: calc(100vh - 140px);
+    transition: grid-template-columns 0.25s ease;
+  }
+  .combined-layout.open {
+    grid-template-columns: 1fr 2fr;
+  }
+  .combined-layout.closed {
+    grid-template-columns: 0fr 1fr;
+  }
+  .combined-left {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--card);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: padding 0.25s ease, border-color 0.25s ease;
+  }
+  .combined-layout.open .combined-left {
+    padding: 16px;
+    overflow-y: auto;
+  }
+  .combined-layout.closed .combined-left {
+    padding: 0;
+    border-color: transparent;
+  }
+  .combined-left-inner {
+    min-width: 250px;
+  }
+  .combined-left .section-header {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .combined-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .combined-toggle:hover { background: #f1f5f9; }
+  .combined-toggle .toggle-chevron {
+    transition: transform 0.25s ease;
+    font-size: 11px;
+  }
+  .combined-layout.closed .combined-toggle .toggle-chevron {
+    transform: rotate(180deg);
+  }
+  .combined-left .task-card {
+    margin-bottom: 6px;
+    padding: 10px 12px;
+  }
+  .combined-left .task-name { font-size: 13px; }
+  .combined-left .task-desc { font-size: 11px; }
+  .combined-left .add-task-form { margin-bottom: 12px; }
+  .combined-left .add-task-form input { padding: 8px 10px; font-size: 13px; }
+  .combined-left .add-task-form button { padding: 8px 14px; font-size: 13px; }
+
+  .combined-right {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .combined-right .mid-term-header { margin-bottom: 12px; }
+  .combined-right .kanban-board { flex: 1; }
+  .combined-right .kanban-column { min-height: 200px; }
+  .combined-right .kanban-card-name { font-size: 13px; margin-bottom: 6px; }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <h1>Simple Task Manager</h1>
+
+  <div class="tabs">
+    <button class="tab" onclick="switchTab('combined')" style="border-bottom-color: var(--primary); color: var(--primary); font-weight: 600;">今すぐ + 中期</button>
+    <button class="tab" style="color: #cbd5e1; pointer-events: none;">|</button>
+    <button class="tab active" onclick="switchTab('short-term')">今すぐ</button>
+    <button class="tab" onclick="switchTab('mid-term')">中期</button>
+    <button class="tab" onclick="switchTab('long-term')">長期</button>
+  </div>
+
+  <!-- ===== 統合ビュー ===== -->
+  <div id="combined" class="tab-content">
+    <div class="combined-layout open" id="combined-layout">
+      <!-- 左 1/3: 今すぐ -->
+      <div class="combined-left">
+        <div class="combined-left-inner">
+        <div class="section-header">
+          <span>今すぐやる</span>
+          <span style="font-size: 12px; color: var(--text-muted); font-weight: 400;">5件</span>
+        </div>
+        <div class="add-task-form">
+          <input type="text" placeholder="タスクを追加...">
+          <button>追加</button>
+        </div>
+
+        <div class="task-card expanded" onclick="toggleExpand(this)">
+          <div class="drag-handle"></div>
+          <div class="task-checkbox" onclick="event.stopPropagation()"></div>
+          <div class="task-info">
+            <div class="task-name">レビュー依頼への返信</div>
+            <div class="task-desc">PR #42 のコードレビュー</div>
+            <div class="task-desc-edit" onclick="event.stopPropagation()">
+              <textarea>PR #42 のコードレビュー</textarea>
+              <div class="edit-hint">Esc で閉じる</div>
+            </div>
+          </div>
+          <button class="task-delete" onclick="event.stopPropagation()">✕</button>
+        </div>
+        <div class="task-card" onclick="toggleExpand(this)">
+          <div class="drag-handle"></div>
+          <div class="task-checkbox" onclick="event.stopPropagation()"></div>
+          <div class="task-info">
+            <div class="task-name">デプロイ手順の確認</div>
+            <div class="task-desc">ステージング環境</div>
+            <div class="task-desc-edit" onclick="event.stopPropagation()">
+              <textarea>ステージング環境</textarea>
+              <div class="edit-hint">Esc で閉じる</div>
+            </div>
+          </div>
+          <button class="task-delete" onclick="event.stopPropagation()">✕</button>
+        </div>
+        <div class="task-card" onclick="toggleExpand(this)">
+          <div class="drag-handle"></div>
+          <div class="task-checkbox" onclick="event.stopPropagation()"></div>
+          <div class="task-info">
+            <div class="task-name">MTG資料の準備</div>
+            <div class="task-desc">14時の定例用</div>
+            <div class="task-desc-edit" onclick="event.stopPropagation()">
+              <textarea>14時の定例用</textarea>
+              <div class="edit-hint">Esc で閉じる</div>
+            </div>
+          </div>
+          <button class="task-delete" onclick="event.stopPropagation()">✕</button>
+        </div>
+        <div class="task-card" onclick="toggleExpand(this)">
+          <div class="drag-handle"></div>
+          <div class="task-checkbox checked" onclick="event.stopPropagation()"></div>
+          <div class="task-info">
+            <div class="task-name done">Slack通知の設定</div>
+            <div class="task-desc-edit" onclick="event.stopPropagation()">
+              <textarea placeholder="説明を追加..."></textarea>
+              <div class="edit-hint">Esc で閉じる</div>
+            </div>
+          </div>
+          <button class="task-delete" onclick="event.stopPropagation()">✕</button>
+        </div>
+        <div class="task-card" onclick="toggleExpand(this)">
+          <div class="drag-handle"></div>
+          <div class="task-checkbox checked" onclick="event.stopPropagation()"></div>
+          <div class="task-info">
+            <div class="task-name done">環境変数の更新</div>
+            <div class="task-desc-edit" onclick="event.stopPropagation()">
+              <textarea placeholder="説明を追加..."></textarea>
+              <div class="edit-hint">Esc で閉じる</div>
+            </div>
+          </div>
+          <button class="task-delete" onclick="event.stopPropagation()">✕</button>
+        </div>
+        </div><!-- /combined-left-inner -->
+      </div>
+
+      <!-- 右 2/3: 中期 -->
+      <div class="combined-right">
+        <div class="mid-term-header">
+          <button class="combined-toggle" onclick="toggleCombinedLeft()">
+            <span class="toggle-chevron">◀</span>
+            <span class="toggle-label">今すぐやる</span>
+          </button>
+          <div class="view-toggle">
+            <button class="active" onclick="switchCombinedMidView('kanban')">カンバン</button>
+            <button onclick="switchCombinedMidView('gantt')">ガントチャート</button>
+          </div>
+          <button class="btn-add" onclick="openMidAdd()">+ タスク追加</button>
+        </div>
+
+        <!-- カンバン -->
+        <div id="combined-kanban-view">
+          <div class="kanban-board">
+            <div class="kanban-column">
+              <div class="column-header">
+                <span>📋 Todo</span>
+                <span class="column-count">3</span>
+              </div>
+              <div class="kanban-card" onclick="openMidEdit('API設計書のレビュー','設計','2026-04-08','2026-04-15','todo','REST API v2のスキーマレビュー')">
+                <div class="kanban-card-name">API設計書のレビュー</div>
+                <div class="kanban-card-meta">
+                  <span class="badge badge-category">設計</span>
+                  <span class="badge badge-deadline">4/15</span>
+                </div>
+              </div>
+              <div class="kanban-card" onclick="openMidEdit('E2Eテスト追加','テスト','2026-04-14','2026-04-20','todo','')">
+                <div class="kanban-card-name">E2Eテスト追加</div>
+                <div class="kanban-card-meta">
+                  <span class="badge badge-category">テスト</span>
+                  <span class="badge badge-deadline">4/20</span>
+                </div>
+              </div>
+              <div class="kanban-card" onclick="openMidEdit('パフォーマンス改善調査','改善','','2026-04-25','todo','')">
+                <div class="kanban-card-name">パフォーマンス改善調査</div>
+                <div class="kanban-card-meta">
+                  <span class="badge badge-category">改善</span>
+                  <span class="badge badge-deadline">4/25</span>
+                </div>
+              </div>
+            </div>
+            <div class="kanban-column">
+              <div class="column-header">
+                <span>🔄 In Progress</span>
+                <span class="column-count">2</span>
+              </div>
+              <div class="kanban-card" onclick="openMidEdit('ユーザー認証機能の実装','開発','2026-03-28','2026-04-03','in-progress','OAuth2.0 + JWT')">
+                <div class="kanban-card-name">ユーザー認証機能の実装</div>
+                <div class="kanban-card-meta">
+                  <span class="badge badge-category">開発</span>
+                  <span class="badge badge-deadline overdue">4/3</span>
+                </div>
+              </div>
+              <div class="kanban-card" onclick="openMidEdit('DB マイグレーション設計','設計','2026-04-05','2026-04-10','in-progress','users, sessions テーブルの追加')">
+                <div class="kanban-card-name">DB マイグレーション設計</div>
+                <div class="kanban-card-meta">
+                  <span class="badge badge-category">設計</span>
+                  <span class="badge badge-deadline">4/10</span>
+                </div>
+              </div>
+            </div>
+            <div class="kanban-column">
+              <div class="column-header">
+                <span>✅ Done</span>
+                <span class="column-count">2</span>
+              </div>
+              <div class="kanban-card" onclick="openMidEdit('CI/CDパイプライン構築','インフラ','2026-03-25','2026-04-01','done','GitHub Actions + Docker')">
+                <div class="kanban-card-name">CI/CDパイプライン構築</div>
+                <div class="kanban-card-meta">
+                  <span class="badge badge-category">インフラ</span>
+                  <span class="badge badge-deadline">4/1</span>
+                </div>
+              </div>
+              <div class="kanban-card" onclick="openMidEdit('開発環境セットアップ文書','ドキュメント','2026-03-20','2026-03-28','done','')">
+                <div class="kanban-card-name">開発環境セットアップ文書</div>
+                <div class="kanban-card-meta">
+                  <span class="badge badge-category">ドキュメント</span>
+                  <span class="badge badge-deadline">3/28</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ガントチャート -->
+        <div id="combined-gantt-view" style="display:none;">
+          <div class="gantt-toolbar">
+            <div class="gantt-nav">
+              <button onclick="gantt2.prev()">◀</button>
+              <span class="gantt-period" id="gantt2-period-label"></span>
+              <button onclick="gantt2.next()">▶</button>
+              <button onclick="gantt2.goToday()" style="margin-left: 8px; font-size: 12px;">今日</button>
+            </div>
+            <div class="gantt-scale-toggle">
+              <button class="active" onclick="gantt2.setScale('day', this)">日</button>
+              <button onclick="gantt2.setScale('week', this)">週</button>
+            </div>
+          </div>
+          <div class="gantt-container" id="gantt2-container">
+            <div class="gantt-chart" id="gantt2-chart"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 短期タスク ===== -->
+  <div id="short-term" class="tab-content active">
+    <div class="add-task-form">
+      <input type="text" placeholder="タスクを追加... (Enterで追加)">
+      <button>追加</button>
+    </div>
+
+    <div class="task-card" onclick="toggleExpand(this)">
+      <div class="drag-handle"></div>
+      <div class="task-checkbox" onclick="event.stopPropagation()"></div>
+      <div class="task-info">
+        <div class="task-name">レビュー依頼への返信</div>
+        <div class="task-desc">PR #42 のコードレビューコメントに返信する</div>
+        <div class="task-desc-edit" onclick="event.stopPropagation()">
+          <textarea>PR #42 のコードレビューコメントに返信する</textarea>
+          <div class="edit-hint">Esc で閉じる</div>
+        </div>
+      </div>
+      <button class="task-delete" onclick="event.stopPropagation()">✕</button>
+    </div>
+
+    <div class="task-card" onclick="toggleExpand(this)">
+      <div class="drag-handle"></div>
+      <div class="task-checkbox" onclick="event.stopPropagation()"></div>
+      <div class="task-info">
+        <div class="task-name">デプロイ手順の確認</div>
+        <div class="task-desc">ステージング環境へのデプロイ手順を確認</div>
+        <div class="task-desc-edit" onclick="event.stopPropagation()">
+          <textarea>ステージング環境へのデプロイ手順を確認</textarea>
+          <div class="edit-hint">Esc で閉じる</div>
+        </div>
+      </div>
+      <button class="task-delete" onclick="event.stopPropagation()">✕</button>
+    </div>
+
+    <div class="task-card" onclick="toggleExpand(this)">
+      <div class="drag-handle"></div>
+      <div class="task-checkbox" onclick="event.stopPropagation()"></div>
+      <div class="task-info">
+        <div class="task-name">MTG資料の準備</div>
+        <div class="task-desc">14時からの定例用の進捗スライド</div>
+        <div class="task-desc-edit" onclick="event.stopPropagation()">
+          <textarea>14時からの定例用の進捗スライド</textarea>
+          <div class="edit-hint">Esc で閉じる</div>
+        </div>
+      </div>
+      <button class="task-delete" onclick="event.stopPropagation()">✕</button>
+    </div>
+
+    <div class="task-card" onclick="toggleExpand(this)">
+      <div class="drag-handle"></div>
+      <div class="task-checkbox checked" onclick="event.stopPropagation()"></div>
+      <div class="task-info">
+        <div class="task-name done">Slack通知の設定</div>
+        <div class="task-desc">CI/CDのSlack通知を設定する</div>
+        <div class="task-desc-edit" onclick="event.stopPropagation()">
+          <textarea>CI/CDのSlack通知を設定する</textarea>
+          <div class="edit-hint">Esc で閉じる</div>
+        </div>
+      </div>
+      <button class="task-delete" onclick="event.stopPropagation()">✕</button>
+    </div>
+
+    <div class="task-card" onclick="toggleExpand(this)">
+      <div class="drag-handle"></div>
+      <div class="task-checkbox checked" onclick="event.stopPropagation()"></div>
+      <div class="task-info">
+        <div class="task-name done">環境変数の更新</div>
+        <div class="task-desc">.env.productionの値を更新</div>
+        <div class="task-desc-edit" onclick="event.stopPropagation()">
+          <textarea>.env.productionの値を更新</textarea>
+          <div class="edit-hint">Esc で閉じる</div>
+        </div>
+      </div>
+      <button class="task-delete" onclick="event.stopPropagation()">✕</button>
+    </div>
+  </div>
+
+  <!-- ===== 中期タスク ===== -->
+  <div id="mid-term" class="tab-content">
+    <div class="mid-term-header">
+      <div class="view-toggle">
+        <button class="active" onclick="switchMidView('kanban')">カンバン</button>
+        <button onclick="switchMidView('gantt')">ガントチャート</button>
+      </div>
+      <button class="btn-add" onclick="openMidAdd()">+ タスク追加</button>
+    </div>
+
+    <!-- カンバン -->
+    <div id="kanban-view">
+      <div class="kanban-board">
+        <div class="kanban-column">
+          <div class="column-header">
+            <span>📋 Todo</span>
+            <span class="column-count">3</span>
+          </div>
+          <div class="kanban-card" onclick="openMidEdit('API設計書のレビュー','設計','2026-04-08','2026-04-15','todo','REST API v2のスキーマレビュー')">
+            <div class="kanban-card-name">API設計書のレビュー</div>
+            <div class="kanban-card-meta">
+              <span class="badge badge-category">設計</span>
+              <span class="badge badge-deadline">4/15</span>
+            </div>
+          </div>
+          <div class="kanban-card" onclick="openMidEdit('E2Eテスト追加','テスト','2026-04-14','2026-04-20','todo','')">
+            <div class="kanban-card-name">E2Eテスト追加</div>
+            <div class="kanban-card-meta">
+              <span class="badge badge-category">テスト</span>
+              <span class="badge badge-deadline">4/20</span>
+            </div>
+          </div>
+          <div class="kanban-card" onclick="openMidEdit('パフォーマンス改善調査','改善','','2026-04-25','todo','')">
+            <div class="kanban-card-name">パフォーマンス改善調査</div>
+            <div class="kanban-card-meta">
+              <span class="badge badge-category">改善</span>
+              <span class="badge badge-deadline">4/25</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="kanban-column">
+          <div class="column-header">
+            <span>🔄 In Progress</span>
+            <span class="column-count">2</span>
+          </div>
+          <div class="kanban-card" onclick="openMidEdit('ユーザー認証機能の実装','開発','2026-03-28','2026-04-03','in-progress','OAuth2.0 + JWT')">
+            <div class="kanban-card-name">ユーザー認証機能の実装</div>
+            <div class="kanban-card-meta">
+              <span class="badge badge-category">開発</span>
+              <span class="badge badge-deadline overdue">4/3</span>
+            </div>
+          </div>
+          <div class="kanban-card" onclick="openMidEdit('DB マイグレーション設計','設計','2026-04-05','2026-04-10','in-progress','users, sessions テーブルの追加')">
+            <div class="kanban-card-name">DB マイグレーション設計</div>
+            <div class="kanban-card-meta">
+              <span class="badge badge-category">設計</span>
+              <span class="badge badge-deadline">4/10</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="kanban-column">
+          <div class="column-header">
+            <span>✅ Done</span>
+            <span class="column-count">2</span>
+          </div>
+          <div class="kanban-card" onclick="openMidEdit('CI/CDパイプライン構築','インフラ','2026-03-25','2026-04-01','done','GitHub Actions + Docker')">
+            <div class="kanban-card-name">CI/CDパイプライン構築</div>
+            <div class="kanban-card-meta">
+              <span class="badge badge-category">インフラ</span>
+              <span class="badge badge-deadline">4/1</span>
+            </div>
+          </div>
+          <div class="kanban-card" onclick="openMidEdit('開発環境セットアップ文書','ドキュメント','2026-03-20','2026-03-28','done','')">
+            <div class="kanban-card-name">開発環境セットアップ文書</div>
+            <div class="kanban-card-meta">
+              <span class="badge badge-category">ドキュメント</span>
+              <span class="badge badge-deadline">3/28</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ガントチャート -->
+    <div id="gantt-view" style="display:none;">
+      <div class="gantt-toolbar">
+        <div class="gantt-nav">
+          <button onclick="gantt.prev()">◀</button>
+          <span class="gantt-period" id="gantt-period-label"></span>
+          <button onclick="gantt.next()">▶</button>
+          <button onclick="gantt.goToday()" style="margin-left: 8px; font-size: 12px;">今日</button>
+        </div>
+        <div class="gantt-scale-toggle">
+          <button class="active" onclick="gantt.setScale('day', this)">日</button>
+          <button onclick="gantt.setScale('week', this)">週</button>
+        </div>
+      </div>
+      <div class="gantt-container" id="gantt-container">
+        <div class="gantt-chart" id="gantt-chart"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 長期タスク ===== -->
+  <div id="long-term" class="tab-content">
+    <div class="long-term-header">
+      <span class="section-title">長期タスク</span>
+      <button class="btn-add" onclick="document.getElementById('add-long-dialog').classList.add('open')">+ タスク追加</button>
+    </div>
+
+    <div class="category-group open">
+      <button class="category-header" onclick="this.parentElement.classList.toggle('open')">
+        <span>📐 アーキテクチャ</span>
+        <span class="chevron">▼</span>
+      </button>
+      <div class="category-items">
+        <div class="long-term-item">
+          <div class="lt-info">
+            <div class="lt-name">マイクロサービス分割の検討</div>
+            <div class="lt-memo">モノリスが肥大化してきたので、ドメインごとの分割案を整理したい</div>
+          </div>
+          <div class="lt-actions">
+            <button>編集</button>
+            <button>削除</button>
+          </div>
+        </div>
+        <div class="long-term-item">
+          <div class="lt-info">
+            <div class="lt-name">キャッシュ戦略の見直し</div>
+            <div class="lt-memo">Redis導入 vs CDNキャッシュの比較検討</div>
+          </div>
+          <div class="lt-actions">
+            <button>編集</button>
+            <button>削除</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="category-group open">
+      <button class="category-header" onclick="this.parentElement.classList.toggle('open')">
+        <span>📚 学習</span>
+        <span class="chevron">▼</span>
+      </button>
+      <div class="category-items">
+        <div class="long-term-item">
+          <div class="lt-info">
+            <div class="lt-name">Rust で CLI ツールを書いてみる</div>
+            <div class="lt-memo">日常の自動化ツールをRustで書き直す練習</div>
+          </div>
+          <div class="lt-actions">
+            <button>編集</button>
+            <button>削除</button>
+          </div>
+        </div>
+        <div class="long-term-item">
+          <div class="lt-info">
+            <div class="lt-name">GraphQL の基礎を学ぶ</div>
+            <div class="lt-memo">REST APIとの比較、Apollo Serverのハンズオン</div>
+          </div>
+          <div class="lt-actions">
+            <button>編集</button>
+            <button>削除</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="category-group">
+      <button class="category-header" onclick="this.parentElement.classList.toggle('open')">
+        <span>💡 アイデア</span>
+        <span class="chevron">▼</span>
+      </button>
+      <div class="category-items">
+        <div class="long-term-item">
+          <div class="lt-info">
+            <div class="lt-name">社内勉強会のテーマ案</div>
+            <div class="lt-memo">チームに共有したい技術トピックをまとめる</div>
+          </div>
+          <div class="lt-actions">
+            <button>編集</button>
+            <button>削除</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 中期タスク 追加/編集ダイアログ -->
+<div id="add-mid-dialog" class="dialog-overlay" onclick="if(event.target===this)closeMidDialog()">
+  <div class="dialog">
+    <h2 id="mid-dialog-title">中期タスクを追加</h2>
+    <label>タスク名</label>
+    <input type="text" id="mid-name" placeholder="タスク名を入力">
+    <label>カテゴリ</label>
+    <input type="text" id="mid-category" placeholder="例: 開発, 設計, テスト">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <div>
+        <label>開始日</label>
+        <input type="date" id="mid-start">
+      </div>
+      <div>
+        <label>締切</label>
+        <input type="date" id="mid-deadline">
+      </div>
+    </div>
+    <label id="mid-status-label" style="display:none;">ステータス</label>
+    <select id="mid-status" style="display:none;">
+      <option value="todo">Todo</option>
+      <option value="in-progress">In Progress</option>
+      <option value="done">Done</option>
+    </select>
+    <label>メモ</label>
+    <textarea id="mid-memo" placeholder="メモを入力..."></textarea>
+    <div class="dialog-actions">
+      <button class="btn-cancel" onclick="closeMidDialog()">キャンセル</button>
+      <button class="btn-submit" id="mid-dialog-submit" onclick="closeMidDialog()">追加</button>
+    </div>
+  </div>
+</div>
+
+<!-- 長期タスク追加ダイアログ -->
+<div id="add-long-dialog" class="dialog-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="dialog">
+    <h2>長期タスクを追加</h2>
+    <label>タスク名</label>
+    <input type="text" placeholder="タスク名を入力">
+    <label>カテゴリ</label>
+    <input type="text" placeholder="例: アーキテクチャ, 学習, アイデア">
+    <label>メモ</label>
+    <textarea placeholder="メモを入力..."></textarea>
+    <div class="dialog-actions">
+      <button class="btn-cancel" onclick="document.getElementById('add-long-dialog').classList.remove('open')">キャンセル</button>
+      <button class="btn-submit" onclick="document.getElementById('add-long-dialog').classList.remove('open')">追加</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(tabId) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function switchMidView(view) {
+  document.querySelectorAll('#mid-term .view-toggle button').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('kanban-view').style.display = view === 'kanban' ? 'block' : 'none';
+  document.getElementById('gantt-view').style.display = view === 'gantt' ? 'block' : 'none';
+  if (view === 'gantt') gantt.render();
+}
+
+function toggleExpand(card) {
+  const wasExpanded = card.classList.contains('expanded');
+  // Close all other expanded cards
+  document.querySelectorAll('.task-card.expanded').forEach(c => c.classList.remove('expanded'));
+  if (!wasExpanded) {
+    card.classList.add('expanded');
+    const textarea = card.querySelector('.task-desc-edit textarea');
+    if (textarea) textarea.focus();
+  }
+}
+
+// Esc to close expanded card
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.task-card.expanded').forEach(c => c.classList.remove('expanded'));
+  }
+});
+
+// Mid-term dialog: add vs edit
+function openMidAdd() {
+  document.getElementById('mid-dialog-title').textContent = '中期タスクを追加';
+  document.getElementById('mid-dialog-submit').textContent = '追加';
+  document.getElementById('mid-name').value = '';
+  document.getElementById('mid-category').value = '';
+  document.getElementById('mid-start').value = '';
+  document.getElementById('mid-deadline').value = '';
+  document.getElementById('mid-status').value = 'todo';
+  document.getElementById('mid-status').style.display = 'none';
+  document.getElementById('mid-status-label').style.display = 'none';
+  document.getElementById('mid-memo').value = '';
+  document.getElementById('add-mid-dialog').classList.add('open');
+}
+
+function openMidEdit(name, category, start, deadline, status, memo) {
+  document.getElementById('mid-dialog-title').textContent = 'タスクを編集';
+  document.getElementById('mid-dialog-submit').textContent = '保存';
+  document.getElementById('mid-name').value = name;
+  document.getElementById('mid-category').value = category;
+  document.getElementById('mid-start').value = start;
+  document.getElementById('mid-deadline').value = deadline;
+  document.getElementById('mid-status').value = status;
+  document.getElementById('mid-status').style.display = '';
+  document.getElementById('mid-status-label').style.display = '';
+  document.getElementById('mid-memo').value = memo;
+  document.getElementById('add-mid-dialog').classList.add('open');
+}
+
+function closeMidDialog() {
+  document.getElementById('add-mid-dialog').classList.remove('open');
+}
+
+function toggleCombinedLeft() {
+  const layout = document.getElementById('combined-layout');
+  const isOpen = layout.classList.contains('open');
+  layout.classList.toggle('open', !isOpen);
+  layout.classList.toggle('closed', isOpen);
+}
+
+function switchCombinedMidView(view) {
+  document.querySelectorAll('#combined .view-toggle button').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('combined-kanban-view').style.display = view === 'kanban' ? 'block' : 'none';
+  document.getElementById('combined-gantt-view').style.display = view === 'gantt' ? 'block' : 'none';
+  if (view === 'gantt') gantt2.render();
+}
+
+// ===== Gantt Chart Factory =====
+function createGantt(opts) {
+  const TASK_COL_WIDTH = opts.taskColWidth || 180;
+  const DAY_COL_WIDTH = opts.dayColWidth || 40;
+  const WEEK_COL_WIDTH = opts.weekColWidth || 80;
+  const TODAY = new Date(2026, 3, 4);
+
+  const tasks = [
+    { name: 'ユーザー認証機能の実装', start: '2026-03-28', end: '2026-04-03', status: 'in-progress' },
+    { name: 'DB マイグレーション設計', start: '2026-04-05', end: '2026-04-10', status: 'in-progress' },
+    { name: 'API設計書のレビュー',     start: null,         end: '2026-04-15', status: 'todo' },
+    { name: 'E2Eテスト追加',           start: '2026-04-14', end: '2026-04-20', status: 'todo' },
+    { name: 'パフォーマンス改善調査',   start: null,         end: '2026-04-25', status: 'todo' },
+    { name: 'CI/CDパイプライン構築',   start: '2026-03-25', end: '2026-04-01', status: 'done' },
+  ];
+
+  let scale = 'day';
+  let viewStart = new Date(2026, 3, 1);
+
+  function d(str) { const [y,m,d] = str.split('-').map(Number); return new Date(y, m-1, d); }
+  function addDays(dt, n) { const r = new Date(dt); r.setDate(r.getDate() + n); return r; }
+  function diffDays(a, b) { return Math.round((b - a) / 86400000); }
+  function fmtMonth(dt) { return `${dt.getFullYear()}年${dt.getMonth()+1}月`; }
+  function isWeekend(dt) { const day = dt.getDay(); return day === 0 || day === 6; }
+  function isSameDay(a, b) { return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate(); }
+  function startOfWeek(dt) { const r = new Date(dt); r.setDate(r.getDate() - ((r.getDay() + 6) % 7)); return r; }
+
+  function getSlots() {
+    if (scale === 'day') {
+      const count = opts.dayCols || 30;
+      const slots = [];
+      for (let i = 0; i < count; i++) slots.push(addDays(viewStart, i));
+      return slots;
+    } else {
+      const count = opts.weekCols || 12;
+      const slots = [];
+      let ws = startOfWeek(viewStart);
+      for (let i = 0; i < count; i++) { slots.push(new Date(ws)); ws = addDays(ws, 7); }
+      return slots;
+    }
+  }
+
+  function getBarStyle(task, slots) {
+    const colWidth = scale === 'day' ? DAY_COL_WIDTH : WEEK_COL_WIDTH;
+    const endDate = d(task.end);
+    const startDate = task.start ? d(task.start) : new Date(viewStart);
+    const viewEnd = scale === 'day' ? addDays(viewStart, slots.length) : addDays(slots[slots.length-1], 7);
+    const barStart = startDate < viewStart ? viewStart : startDate;
+    const barEnd = endDate > viewEnd ? viewEnd : addDays(endDate, 1);
+    if (barEnd <= viewStart || barStart >= viewEnd) return null;
+    let leftOffset, width;
+    if (scale === 'day') {
+      leftOffset = diffDays(viewStart, barStart) * colWidth;
+      width = diffDays(barStart, barEnd) * colWidth;
+    } else {
+      const wsStart = startOfWeek(viewStart);
+      leftOffset = (diffDays(wsStart, barStart) / 7) * colWidth;
+      width = (diffDays(barStart, barEnd) / 7) * colWidth;
+    }
+    return { left: leftOffset, width: Math.max(width, 4) };
+  }
+
+  function getBarClass(task) {
+    const endDate = d(task.end);
+    if (task.status === 'done') return 'done';
+    if (endDate < TODAY) return 'overdue';
+    return task.status === 'in-progress' ? 'in-progress' : 'todo';
+  }
+
+  function getBarLabel(task) {
+    const endDate = d(task.end);
+    const startDate = task.start ? d(task.start) : null;
+    if (startDate) return `${startDate.getMonth()+1}/${startDate.getDate()}〜${endDate.getMonth()+1}/${endDate.getDate()}`;
+    return `〜${endDate.getMonth()+1}/${endDate.getDate()}`;
+  }
+
+  function render() {
+    const chart = document.getElementById(opts.chartId);
+    const slots = getSlots();
+    const colWidth = scale === 'day' ? DAY_COL_WIDTH : WEEK_COL_WIDTH;
+    const gridCols = `${TASK_COL_WIDTH}px repeat(${slots.length}, ${colWidth}px)`;
+
+    const lastSlot = scale === 'day' ? addDays(slots[slots.length-1], 0) : addDays(slots[slots.length-1], 6);
+    document.getElementById(opts.periodLabelId).textContent =
+      fmtMonth(viewStart) + (viewStart.getMonth() !== lastSlot.getMonth() ? ' 〜 ' + fmtMonth(lastSlot) : '');
+
+    let html = '';
+
+    // Month row
+    html += `<div class="gantt-month-row" style="grid-template-columns:${gridCols}">`;
+    html += `<div class="gantt-month-label"></div>`;
+    let i = 0;
+    while (i < slots.length) {
+      const m = slots[i].getMonth();
+      let span = 0;
+      while (i + span < slots.length && slots[i + span].getMonth() === m) span++;
+      html += `<div class="gantt-month-span" style="grid-column: span ${span}">${slots[i].getFullYear()}年${m+1}月</div>`;
+      i += span;
+    }
+    html += `</div>`;
+
+    // Header row
+    html += `<div class="gantt-header-row" style="grid-template-columns:${gridCols}">`;
+    html += `<div class="gantt-header-label">タスク</div>`;
+    if (scale === 'day') {
+      slots.forEach(s => {
+        const cls = isSameDay(s, TODAY) ? ' today' : isWeekend(s) ? ' weekend' : '';
+        html += `<div class="gantt-header-day${cls}">${s.getDate()}</div>`;
+      });
+    } else {
+      slots.forEach(s => {
+        html += `<div class="gantt-header-day">${s.getMonth()+1}/${s.getDate()}</div>`;
+      });
+    }
+    html += `</div>`;
+
+    // Task rows
+    tasks.forEach(task => {
+      html += `<div class="gantt-task-row" style="grid-template-columns:${gridCols}">`;
+      html += `<div class="gantt-task-name">${task.name}</div>`;
+      slots.forEach(s => {
+        const cls = (scale === 'day' && isWeekend(s)) ? ' weekend' : '';
+        html += `<div class="gantt-cell${cls}"></div>`;
+      });
+      html += `</div>`;
+    });
+
+    chart.innerHTML = html;
+    chart.style.width = `${TASK_COL_WIDTH + slots.length * colWidth}px`;
+
+    // Overlay bars
+    const taskRows = chart.querySelectorAll('.gantt-task-row');
+    tasks.forEach((task, i) => {
+      const bar = getBarStyle(task, slots);
+      if (!bar) return;
+      const container = document.createElement('div');
+      container.className = 'gantt-bar-container';
+      container.style.left = `${TASK_COL_WIDTH + bar.left}px`;
+      container.style.width = `${bar.width}px`;
+      const barEl = document.createElement('div');
+      barEl.className = `gantt-bar ${getBarClass(task)}`;
+      barEl.textContent = getBarLabel(task);
+      container.appendChild(barEl);
+      taskRows[i].style.position = 'relative';
+      taskRows[i].appendChild(container);
+    });
+
+    // Today line
+    chart.style.position = 'relative';
+    if (scale === 'day') {
+      const todayOffset = diffDays(viewStart, TODAY);
+      if (todayOffset >= 0 && todayOffset < slots.length) {
+        const line = document.createElement('div');
+        line.className = 'gantt-today-line';
+        line.style.left = `${TASK_COL_WIDTH + todayOffset * colWidth + colWidth / 2}px`;
+        line.style.top = '0'; line.style.bottom = '0';
+        chart.appendChild(line);
+      }
+    } else {
+      const ws = startOfWeek(viewStart);
+      const todayPos = (diffDays(ws, TODAY) / 7) * WEEK_COL_WIDTH;
+      if (todayPos >= 0 && todayPos < slots.length * WEEK_COL_WIDTH) {
+        const line = document.createElement('div');
+        line.className = 'gantt-today-line';
+        line.style.left = `${TASK_COL_WIDTH + todayPos}px`;
+        line.style.top = '0'; line.style.bottom = '0';
+        chart.appendChild(line);
+      }
+    }
+  }
+
+  // Drag to scroll
+  const container = document.getElementById(opts.containerId);
+  let isDragging = false, startX = 0, scrollStart = 0;
+  container.addEventListener('mousedown', (e) => {
+    isDragging = true; startX = e.clientX; scrollStart = container.scrollLeft;
+    container.classList.add('dragging');
+  });
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    container.scrollLeft = scrollStart - (e.clientX - startX);
+  });
+  document.addEventListener('mouseup', () => {
+    if (!isDragging) return;
+    isDragging = false; container.classList.remove('dragging');
+  });
+
+  return {
+    render,
+    prev() {
+      viewStart = addDays(viewStart, scale === 'day' ? -7 : -28);
+      render();
+    },
+    next() {
+      viewStart = addDays(viewStart, scale === 'day' ? 7 : 28);
+      render();
+    },
+    goToday() {
+      viewStart = scale === 'day' ? addDays(TODAY, -3) : startOfWeek(addDays(TODAY, -7));
+      render();
+    },
+    setScale(s, btn) {
+      scale = s;
+      btn.closest('.gantt-scale-toggle').querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (s === 'week') viewStart = startOfWeek(viewStart);
+      render();
+    }
+  };
+}
+
+// Two gantt instances: standalone and combined
+const gantt = createGantt({
+  chartId: 'gantt-chart',
+  containerId: 'gantt-container',
+  periodLabelId: 'gantt-period-label',
+  taskColWidth: 180, dayColWidth: 40, weekColWidth: 80,
+  dayCols: 30, weekCols: 12,
+});
+
+const gantt2 = createGantt({
+  chartId: 'gantt2-chart',
+  containerId: 'gantt2-container',
+  periodLabelId: 'gantt2-period-label',
+  taskColWidth: 160, dayColWidth: 32, weekColWidth: 64,
+  dayCols: 24, weekCols: 10,
+});
+
+gantt.render();
+gantt2.render();
+</script>
+
+</body>
+</html>
