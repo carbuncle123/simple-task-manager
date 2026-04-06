@@ -8,6 +8,7 @@ import {
   useUpdateShortTermTask,
   useDeleteShortTermTask,
 } from "@/hooks/use-short-term-tasks";
+import { linkify } from "@/lib/linkify";
 
 interface TaskCardProps {
   task: ShortTermTask;
@@ -93,8 +94,8 @@ export function TaskCard({ task, dragHandleProps }: TaskCardProps) {
 
         {/* Description: show text when collapsed, textarea when expanded */}
         {!isExpanded && task.description && (
-          <div className="text-xs text-muted-foreground mt-0.5 truncate">
-            {task.description}
+          <div className="text-xs text-muted-foreground mt-0.5 whitespace-pre-wrap break-words">
+            {linkify(task.description)}
           </div>
         )}
 
