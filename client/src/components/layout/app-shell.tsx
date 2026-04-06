@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CombinedView } from "@/components/combined/combined-view";
-import { LongTermPlaceholder } from "@/components/long-term/long-term-placeholder";
+import { LongTermView } from "@/components/long-term/long-term-view";
 
 export function AppShell() {
   return (
@@ -16,7 +16,7 @@ export function AppShell() {
             <CombinedView />
           </TabsContent>
           <TabsContent value="long-term" className="mt-4">
-            <LongTermPlaceholder />
+            <LongTermView />
           </TabsContent>
         </Tabs>
       </div>

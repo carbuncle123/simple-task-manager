@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { shortTermRoutes } from "./routes/short-term.js";
 import { midTermRoutes } from "./routes/mid-term.js";
+import { longTermRoutes } from "./routes/long-term.js";
 
 const app = new Hono();
 
@@ -14,6 +15,7 @@ app.get("/api/health", (c) => {
 
 app.route("/api/short-term", shortTermRoutes);
 app.route("/api/mid-term", midTermRoutes);
+app.route("/api/long-term", longTermRoutes);
 
 const port = 3001;
 console.log(`Server running on http://localhost:${port}`);
