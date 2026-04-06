@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { MidTermTask } from "@simple-task-manager/shared";
 import { KanbanBoard } from "@/components/mid-term/kanban-board";
 import { GanttChart } from "@/components/gantt/gantt-chart";
@@ -81,8 +82,15 @@ export function MidTermPanel({ isLeftOpen, onToggleLeft }: MidTermPanelProps) {
       </div>
 
       {isLoading ? (
-        <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
-          読み込み中...
+        <div className="grid grid-cols-3 gap-4 flex-1">
+          {[...Array(3)].map((_, col) => (
+            <div key={col} className="bg-muted/50 rounded-lg p-3 space-y-2">
+              <Skeleton className="h-5 w-24 mb-3" />
+              {[...Array(2)].map((_, i) => (
+                <Skeleton key={i} className="h-20 w-full rounded-lg" />
+              ))}
+            </div>
+          ))}
         </div>
       ) : viewMode === "kanban" ? (
         <KanbanBoard tasks={tasks} onCardClick={handleCardClick} />
