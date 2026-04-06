@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 import { AddTaskForm } from "@/components/short-term/add-task-form";
 import { TaskList } from "@/components/short-term/task-list";
 import { useShortTermTasks } from "@/hooks/use-short-term-tasks";
@@ -29,8 +30,10 @@ export function ShortTermPanel({ isOpen }: ShortTermPanelProps) {
         <AddTaskForm />
 
         {isLoading ? (
-          <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
-            読み込み中...
+          <div className="space-y-2">
+            {[...Array(3)].map((_, i) => (
+              <Skeleton key={i} className="h-14 w-full rounded-lg" />
+            ))}
           </div>
         ) : (
           <div className="overflow-y-auto flex-1">

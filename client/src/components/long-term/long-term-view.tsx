@@ -7,6 +7,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { LongTermTask } from "@simple-task-manager/shared";
 import { useLongTermTasks, useDeleteLongTermTask } from "@/hooks/use-long-term-tasks";
 import { LongTermTaskDialog } from "./long-term-task-dialog";
@@ -53,8 +54,16 @@ export function LongTermView() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64 text-muted-foreground text-sm">
-        読み込み中...
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <Skeleton className="h-6 w-24" />
+          <Skeleton className="h-8 w-28" />
+        </div>
+        <div className="space-y-3">
+          {[...Array(3)].map((_, i) => (
+            <Skeleton key={i} className="h-16 w-full rounded-lg" />
+          ))}
+        </div>
       </div>
     );
   }

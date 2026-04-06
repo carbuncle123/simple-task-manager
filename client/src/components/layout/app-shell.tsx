@@ -5,8 +5,8 @@ import { LongTermView } from "@/components/long-term/long-term-view";
 export function AppShell() {
   return (
     <div className="min-h-svh bg-background">
-      <div className="mx-auto max-w-[1400px] p-6">
-        <h1 className="text-2xl font-bold mb-5">Simple Task Manager</h1>
+      <div className="mx-auto max-w-[1400px] px-4 py-4 md:p-6">
+        <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-5">Simple Task Manager</h1>
         <Tabs defaultValue="tasks">
           <TabsList>
             <TabsTrigger value="tasks">タスク</TabsTrigger>
