@@ -58,8 +58,12 @@ function SortableCard({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.4 : 1,
-    zIndex: isDragging ? 1 : 0,
+    opacity: isDragging ? 0 : 1,
+    height: isDragging ? 0 : undefined,
+    overflow: isDragging ? "hidden" as const : undefined,
+    padding: isDragging ? 0 : undefined,
+    margin: isDragging ? 0 : undefined,
+    border: isDragging ? "none" : undefined,
   };
 
   const isOverdue =
@@ -371,7 +375,7 @@ export function KanbanBoard({ tasks, onCardClick }: KanbanBoardProps) {
         ))}
       </div>
 
-      <DragOverlay>
+      <DragOverlay dropAnimation={null}>
         {activeTask && (
           <div className="bg-card border border-primary rounded-lg p-3 shadow-lg opacity-90 rotate-2 cursor-grabbing">
             <div className="text-sm font-medium">{activeTask.name}</div>
