@@ -164,7 +164,7 @@ export function MidTermTaskDialog({
                 <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent position="popper" sideOffset={4}>
+                <SelectContent position="popper" sideOffset={4} className="bg-background">
                   <SelectItem value="todo">Todo</SelectItem>
                   <SelectItem value="in-progress">In Progress</SelectItem>
                   <SelectItem value="done">Done</SelectItem>
