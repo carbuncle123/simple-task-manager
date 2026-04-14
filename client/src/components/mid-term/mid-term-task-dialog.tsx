@@ -105,14 +105,14 @@ export function MidTermTaskDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[420px]">
+      <DialogContent className="sm:max-w-[420px] max-h-[90vh] flex flex-col overflow-hidden">
         <DialogHeader>
           <DialogTitle>
             {isEdit ? "タスクを編集" : "中期タスクを追加"}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-3 mt-2">
+        <div className="space-y-3 mt-2 overflow-y-auto min-h-0 pr-1">
           <div>
             <label className="text-sm font-medium mb-1 block">タスク名</label>
             <Input
@@ -161,10 +161,10 @@ export function MidTermTaskDialog({
                 value={status}
                 onValueChange={(v) => setStatus(v as MidTermStatus)}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent position="popper" sideOffset={4} className="bg-background">
                   <SelectItem value="todo">Todo</SelectItem>
                   <SelectItem value="in-progress">In Progress</SelectItem>
                   <SelectItem value="done">Done</SelectItem>
@@ -179,7 +179,7 @@ export function MidTermTaskDialog({
               value={memo}
               onChange={(e) => setMemo(e.target.value)}
               placeholder="メモを入力..."
-              className="min-h-[80px]"
+              className="min-h-[80px] max-h-[200px]"
             />
           </div>
 
