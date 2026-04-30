@@ -1,4 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TasksView } from "@/components/tasks/tasks-view";
 import { LongTermView } from "@/components/long-term/long-term-view";
 import { SettingsView } from "@/components/settings/settings-view";
 
@@ -6,9 +7,7 @@ function PhasePlaceholder({ phase, label }: { phase: string; label: string }) {
   return (
     <div className="bg-white border border-dashed border-slate-300 rounded-lg p-12 text-center">
       <p className="text-sm font-medium text-slate-900">{label}</p>
-      <p className="text-xs text-slate-500 mt-1">
-        {phase} で実装予定
-      </p>
+      <p className="text-xs text-slate-500 mt-1">{phase} で実装予定</p>
     </div>
   );
 }
@@ -20,7 +19,7 @@ export function AppShell() {
         <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-5">
           Simple Task Manager
         </h1>
-        <Tabs defaultValue="settings">
+        <Tabs defaultValue="tasks">
           <TabsList>
             <TabsTrigger value="tasks">タスク</TabsTrigger>
             <TabsTrigger value="gantt">ガント</TabsTrigger>
@@ -28,7 +27,7 @@ export function AppShell() {
             <TabsTrigger value="settings">設定</TabsTrigger>
           </TabsList>
           <TabsContent value="tasks" className="mt-4">
-            <PhasePlaceholder phase="Phase 3" label="タスク管理" />
+            <TasksView />
           </TabsContent>
           <TabsContent value="gantt" className="mt-4">
             <PhasePlaceholder phase="Phase 4" label="ガントチャート" />
