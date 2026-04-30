@@ -1,79 +1,71 @@
 import { z } from "zod";
 
-// ===== Short-term Tasks =====
+// ===== Projects =====
 
-export const shortTermStatusSchema = z.enum(["todo", "done"]);
-export type ShortTermStatus = z.infer<typeof shortTermStatusSchema>;
-
-export const createShortTermTaskSchema = z.object({
+export const createProjectSchema = z.object({
   name: z.string().min(1),
-  description: z.string().optional(),
 });
-export type CreateShortTermTask = z.infer<typeof createShortTermTaskSchema>;
+export type CreateProject = z.infer<typeof createProjectSchema>;
 
-export const updateShortTermTaskSchema = z.object({
+export const updateProjectSchema = z.object({
   name: z.string().min(1).optional(),
-  description: z.string().optional(),
-  status: shortTermStatusSchema.optional(),
 });
-export type UpdateShortTermTask = z.infer<typeof updateShortTermTaskSchema>;
+export type UpdateProject = z.infer<typeof updateProjectSchema>;
 
-export const reorderShortTermSchema = z.object({
+export const reorderProjectsSchema = z.object({
   orderedIds: z.array(z.number()),
 });
 
-export interface ShortTermTask {
+export interface Project {
   id: number;
   name: string;
-  description: string;
-  status: ShortTermStatus;
   displayOrder: number;
   createdAt: string;
   updatedAt: string;
 }
 
-// ===== Mid-term Tasks =====
+// ===== Tasks =====
 
-export const midTermStatusSchema = z.enum(["todo", "in-progress", "done"]);
-export type MidTermStatus = z.infer<typeof midTermStatusSchema>;
+export const taskStatusSchema = z.enum(["todo", "in-progress"]);
+export type TaskStatus = z.infer<typeof taskStatusSchema>;
 
-export const createMidTermTaskSchema = z.object({
+const dateSchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "deadline must be YYYY-MM-DD");
+
+export const createTaskSchema = z.object({
+  projectId: z.number(),
   name: z.string().min(1),
-  category: z.string().optional(),
-  startDate: z.string().optional(),
-  deadline: z.string().optional(),
+  deadline: dateSchema.optional(),
   memo: z.string().optional(),
 });
-export type CreateMidTermTask = z.infer<typeof createMidTermTaskSchema>;
+export type CreateTask = z.infer<typeof createTaskSchema>;
 
-export const updateMidTermTaskSchema = z.object({
+export const updateTaskSchema = z.object({
   name: z.string().min(1).optional(),
-  category: z.string().optional(),
-  startDate: z.string().nullable().optional(),
-  deadline: z.string().nullable().optional(),
-  status: midTermStatusSchema.optional(),
+  deadline: dateSchema.optional(),
   memo: z.string().optional(),
+  status: taskStatusSchema.optional(),
 });
-export type UpdateMidTermTask = z.infer<typeof updateMidTermTaskSchema>;
+export type UpdateTask = z.infer<typeof updateTaskSchema>;
 
-export const reorderMidTermSchema = z.object({
+export const reorderTasksSchema = z.object({
   items: z.array(
     z.object({
       id: z.number(),
-      status: midTermStatusSchema,
+      projectId: z.number(),
       displayOrder: z.number(),
     })
   ),
 });
 
-export interface MidTermTask {
+export interface Task {
   id: number;
+  projectId: number;
   name: string;
-  category: string;
-  startDate: string | null;
-  deadline: string | null;
-  status: MidTermStatus;
+  deadline: string;
   memo: string;
+  status: TaskStatus;
   displayOrder: number;
   createdAt: string;
   updatedAt: string;

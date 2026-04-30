@@ -1,12 +1,14 @@
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
-export const shortTermTasks = sqliteTable("short_term_tasks", {
+const todayJST = () => {
+  const now = new Date();
+  const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  return jst.toISOString().slice(0, 10);
+};
+
+export const projects = sqliteTable("projects", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   name: text("name").notNull(),
-  description: text("description").notNull().default(""),
-  status: text("status", { enum: ["todo", "done"] })
-    .notNull()
-    .default("todo"),
   displayOrder: integer("display_order").notNull().default(0),
   createdAt: text("created_at")
     .notNull()
@@ -16,16 +18,17 @@ export const shortTermTasks = sqliteTable("short_term_tasks", {
     .$defaultFn(() => new Date().toISOString()),
 });
 
-export const midTermTasks = sqliteTable("mid_term_tasks", {
+export const tasks = sqliteTable("tasks", {
   id: integer("id").primaryKey({ autoIncrement: true }),
+  projectId: integer("project_id")
+    .notNull()
+    .references(() => projects.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
-  category: text("category").notNull().default(""),
-  startDate: text("start_date"),
-  deadline: text("deadline"),
-  status: text("status", { enum: ["todo", "in-progress", "done"] })
+  deadline: text("deadline").notNull().$defaultFn(todayJST),
+  memo: text("memo").notNull().default(""),
+  status: text("status", { enum: ["todo", "in-progress"] })
     .notNull()
     .default("todo"),
-  memo: text("memo").notNull().default(""),
   displayOrder: integer("display_order").notNull().default(0),
   createdAt: text("created_at")
     .notNull()
