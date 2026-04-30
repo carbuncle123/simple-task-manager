@@ -1,16 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TasksView } from "@/components/tasks/tasks-view";
+import { GanttView } from "@/components/gantt/gantt-view";
 import { LongTermView } from "@/components/long-term/long-term-view";
 import { SettingsView } from "@/components/settings/settings-view";
-
-function PhasePlaceholder({ phase, label }: { phase: string; label: string }) {
-  return (
-    <div className="bg-white border border-dashed border-slate-300 rounded-lg p-12 text-center">
-      <p className="text-sm font-medium text-slate-900">{label}</p>
-      <p className="text-xs text-slate-500 mt-1">{phase} で実装予定</p>
-    </div>
-  );
-}
 
 export function AppShell() {
   return (
@@ -30,7 +22,7 @@ export function AppShell() {
             <TasksView />
           </TabsContent>
           <TabsContent value="gantt" className="mt-4">
-            <PhasePlaceholder phase="Phase 4" label="ガントチャート" />
+            <GanttView />
           </TabsContent>
           <TabsContent value="long-term" className="mt-4">
             <LongTermView />
