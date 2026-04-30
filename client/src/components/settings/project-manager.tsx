@@ -24,6 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   useProjects,
   useCreateProject,
@@ -120,7 +121,7 @@ function SortableRow({ project, taskCount, onEdit, onDelete }: SortableRowProps)
           {taskCount > 0 ? `${taskCount} 件のタスク` : "タスクなし"}
         </span>
       </div>
-      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition flex-shrink-0">
+      <div className="flex gap-1 md:opacity-0 md:group-hover:opacity-100 transition flex-shrink-0">
         <Button variant="ghost" size="sm" onClick={onEdit} className="h-7 px-2.5 text-xs">
           編集
         </Button>
@@ -287,7 +288,15 @@ export function ProjectManager() {
           </div>
         </div>
 
-        {projects.length === 0 ? (
+        {projectsQuery.isLoading ? (
+          <ul className="divide-y divide-slate-200">
+            {[0, 1, 2].map((i) => (
+              <li key={i} className="px-6 py-3">
+                <Skeleton className="h-5 w-48" />
+              </li>
+            ))}
+          </ul>
+        ) : projects.length === 0 ? (
           <div className="px-6 py-12 text-center">
             <p className="text-sm text-slate-500">
               プロジェクトがまだありません

@@ -16,10 +16,38 @@ import {
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import type { Task } from "@simple-task-manager/shared";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useProjects } from "@/hooks/use-projects";
 import { useTasks, useReorderTasks, type ReorderItem } from "@/hooks/use-tasks";
 import { ProjectColumn } from "./project-column";
 import { TaskCard } from "./task-card";
+
+function TasksViewSkeleton() {
+  return (
+    <div className="overflow-x-auto -mx-4 md:-mx-6 px-4 md:px-6 pb-4">
+      <div className="flex gap-4">
+        {[0, 1, 2].map((i) => (
+          <div
+            key={i}
+            className="flex-shrink-0 w-80 bg-slate-50 border border-slate-200 rounded-lg flex flex-col"
+          >
+            <div className="px-4 py-3 border-b border-slate-200">
+              <Skeleton className="h-4 w-32" />
+            </div>
+            <div className="px-4 py-3 border-b border-slate-200">
+              <Skeleton className="h-9 w-full" />
+            </div>
+            <div className="px-3 py-3 space-y-2">
+              {[0, 1, 2].map((j) => (
+                <Skeleton key={j} className="h-14 w-full rounded-lg" />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 const collisionDetection: CollisionDetection = (args) => {
   const pointer = pointerWithin(args);
@@ -162,6 +190,10 @@ export function TasksView() {
     setActiveTask(null);
     setLocalTasks(null);
   };
+
+  if (projectsQuery.isLoading || tasksQuery.isLoading) {
+    return <TasksViewSkeleton />;
+  }
 
   if (projects.length === 0) {
     return (
