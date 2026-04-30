@@ -13,9 +13,26 @@ import {
 import { useProjects } from "@/hooks/use-projects";
 import { useTasks } from "@/hooks/use-tasks";
 import type { Task } from "@simple-task-manager/shared";
+import { Skeleton } from "@/components/ui/skeleton";
 import { GanttToolbar } from "./gantt-toolbar";
 import { GanttHeader } from "./gantt-header";
 import { GanttProjectRow } from "./gantt-project-row";
+
+function GanttViewSkeleton() {
+  return (
+    <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div className="px-4 py-2.5 border-b border-slate-200 flex items-center gap-3">
+        <Skeleton className="h-8 w-32" />
+        <Skeleton className="h-8 w-24 ml-2" />
+      </div>
+      <div className="p-4 space-y-2">
+        {[0, 1, 2, 3, 4].map((i) => (
+          <Skeleton key={i} className="h-9 w-full" />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 const LABEL_WIDTH = 220;
 
@@ -78,6 +95,10 @@ export function GanttView() {
   const pxPerDay = scale === "day" ? COL_WIDTH_PX : COL_WIDTH_PX / 7;
   const todayLeftPx = todayDays * pxPerDay + (scale === "day" ? COL_WIDTH_PX / 2 : 0);
   const showTodayLine = todayDays >= 0 && todayDays < TOTAL_COLUMNS * (scale === "week" ? 7 : 1);
+
+  if (projectsQuery.isLoading || tasksQuery.isLoading) {
+    return <GanttViewSkeleton />;
+  }
 
   if (projects.length === 0) {
     return (

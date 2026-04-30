@@ -60,7 +60,7 @@ export function GanttToolbar({
           週
         </button>
       </div>
-      <div className="ml-auto flex items-center gap-4 text-xs text-slate-600">
+      <div className="ml-auto hidden md:flex items-center gap-4 text-xs text-slate-600">
         <span className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded-full bg-slate-200 border border-slate-300" />
           対応前
