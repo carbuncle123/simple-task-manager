@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "ad8c5d0f-31fa-4494-a29c-7b01cdade57b",
+  "id": "7a0fb600-dcd1-4afd-a7c4-cde819f26fe5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "long_term_tasks": {
@@ -58,8 +58,8 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "mid_term_tasks": {
-      "name": "mid_term_tasks",
+    "projects": {
+      "name": "projects",
       "columns": {
         "id": {
           "name": "id",
@@ -74,44 +74,6 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
-        },
-        "category": {
-          "name": "category",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "''"
-        },
-        "start_date": {
-          "name": "start_date",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "deadline": {
-          "name": "deadline",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "status": {
-          "name": "status",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'todo'"
-        },
-        "memo": {
-          "name": "memo",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "''"
         },
         "display_order": {
           "name": "display_order",
@@ -142,8 +104,8 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "short_term_tasks": {
-      "name": "short_term_tasks",
+    "tasks": {
+      "name": "tasks",
       "columns": {
         "id": {
           "name": "id",
@@ -152,6 +114,13 @@
           "notNull": true,
           "autoincrement": true
         },
+        "project_id": {
+          "name": "project_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "name": {
           "name": "name",
           "type": "text",
@@ -159,8 +128,15 @@
           "notNull": true,
           "autoincrement": false
         },
-        "description": {
-          "name": "description",
+        "deadline": {
+          "name": "deadline",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "memo": {
+          "name": "memo",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -199,7 +175,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "tasks_project_id_projects_id_fk": {
+          "name": "tasks_project_id_projects_id_fk",
+          "tableFrom": "tasks",
+          "tableTo": "projects",
+          "columnsFrom": [
+            "project_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
