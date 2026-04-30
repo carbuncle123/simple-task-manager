@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>タスクカード - モックアップ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+      .label {
+        font-size: 11px;
+        color: #64748b;
+        margin-bottom: 6px;
+        font-weight: 500;
+      }
+      .group:hover .drag-handle {
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-100 p-8">
+    <header class="max-w-5xl mx-auto mb-8">
+      <h1 class="text-2xl font-bold text-slate-900">
+        タスクカード モックアップ
+      </h1>
+      <p class="text-sm text-slate-600 mt-1">
+        個別タスクカードの状態バリエーション。クリック挙動・色・余白の合意用。
+      </p>
+    </header>
+
+    <main class="max-w-5xl mx-auto space-y-12">
+      <!-- ============================================ -->
+      <!-- セクション 1: 状態 (対応前 / 対応中)         -->
+      <!-- ============================================ -->
+      <section>
+        <h2 class="text-lg font-semibold text-slate-900 mb-1">
+          1. 状態切り替え (折り畳み)
+        </h2>
+        <p class="text-sm text-slate-600 mb-4">
+          カード全体の背景色で対応前 / 対応中を区別。状態切替ボタンと完了ボタンを左右に配置。
+        </p>
+        <div class="grid grid-cols-2 gap-6">
+          <!-- ① 対応前 -->
+          <div>
+            <p class="label">① 対応前</p>
+            <article
+              class="group bg-white border border-slate-200 rounded-lg p-3 shadow-sm hover:shadow-md transition cursor-pointer"
+            >
+              <div class="flex items-center gap-2">
+                <span
+                  class="drag-handle text-slate-300 cursor-grab opacity-0 transition"
+                  title="ドラッグで並び替え"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="9" cy="6" r="1.5" />
+                    <circle cx="9" cy="12" r="1.5" />
+                    <circle cx="9" cy="18" r="1.5" />
+                    <circle cx="15" cy="6" r="1.5" />
+                    <circle cx="15" cy="12" r="1.5" />
+                    <circle cx="15" cy="18" r="1.5" />
+                  </svg>
+                </span>
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full border border-slate-300 flex items-center justify-center text-slate-400 hover:border-sky-400 hover:text-sky-500 transition"
+                  title="対応中に変更"
+                >
+                  <svg
+                    class="w-3.5 h-3.5 ml-0.5"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </button>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-slate-900 truncate">
+                    バグ修正: ヘッダー表示崩れ
+                  </p>
+                  <p class="text-xs text-slate-500 mt-0.5">
+                    05/15 <span class="text-slate-400">(あと15日)</span>
+                  </p>
+                </div>
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition flex items-center justify-center"
+                  title="完了 (削除)"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+              </div>
+            </article>
+          </div>
+
+          <!-- ② 対応中 -->
+          <div>
+            <p class="label">② 対応中 (薄い青背景)</p>
+            <article
+              class="group bg-sky-50 border border-sky-200 rounded-lg p-3 shadow-sm hover:shadow-md transition cursor-pointer"
+            >
+              <div class="flex items-center gap-2">
+                <span
+                  class="drag-handle text-sky-300 cursor-grab opacity-0 transition"
+                  title="ドラッグで並び替え"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="9" cy="6" r="1.5" />
+                    <circle cx="9" cy="12" r="1.5" />
+                    <circle cx="9" cy="18" r="1.5" />
+                    <circle cx="15" cy="6" r="1.5" />
+                    <circle cx="15" cy="12" r="1.5" />
+                    <circle cx="15" cy="18" r="1.5" />
+                  </svg>
+                </span>
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full bg-sky-500 border border-sky-500 text-white flex items-center justify-center hover:bg-sky-600 transition"
+                  title="対応前に戻す"
+                >
+                  <svg
+                    class="w-3 h-3"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <rect x="6" y="5" width="4" height="14" rx="1" />
+                    <rect x="14" y="5" width="4" height="14" rx="1" />
+                  </svg>
+                </button>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-slate-900 truncate">
+                    PR #123 のレビュー対応
+                  </p>
+                  <p class="text-xs text-slate-600 mt-0.5">
+                    05/02 <span class="text-slate-500">(あと2日)</span>
+                  </p>
+                </div>
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 transition flex items-center justify-center"
+                  title="完了 (削除)"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================ -->
+      <!-- セクション 2: 展開 (インライン編集モード)    -->
+      <!-- ============================================ -->
+      <section>
+        <h2 class="text-lg font-semibold text-slate-900 mb-1">
+          2. 展開モード (インライン編集)
+        </h2>
+        <p class="text-sm text-slate-600 mb-4">
+          カードをクリックすると展開し、タスク名 / 締切 / メモを直接編集可能。再度クリックで折り畳む。
+        </p>
+        <div class="grid grid-cols-2 gap-6">
+          <!-- ③ 対応前 - 展開 -->
+          <div>
+            <p class="label">③ 対応前 (展開)</p>
+            <article
+              class="bg-white border border-slate-300 rounded-lg p-3 shadow-md ring-2 ring-blue-100"
+            >
+              <div class="flex items-center gap-2 mb-3">
+                <span class="text-slate-300 cursor-grab">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="9" cy="6" r="1.5" />
+                    <circle cx="9" cy="12" r="1.5" />
+                    <circle cx="9" cy="18" r="1.5" />
+                    <circle cx="15" cy="6" r="1.5" />
+                    <circle cx="15" cy="12" r="1.5" />
+                    <circle cx="15" cy="18" r="1.5" />
+                  </svg>
+                </span>
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full border border-slate-300 flex items-center justify-center text-slate-400 hover:border-sky-400 hover:text-sky-500 transition"
+                >
+                  <svg
+                    class="w-3.5 h-3.5 ml-0.5"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </button>
+                <input
+                  type="text"
+                  value="設計書の更新"
+                  class="flex-1 min-w-0 text-sm font-medium text-slate-900 bg-transparent border-b border-slate-300 focus:border-blue-500 focus:outline-none px-1 py-0.5"
+                />
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition flex items-center justify-center"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+              </div>
+              <div class="ml-9 space-y-2">
+                <div class="flex items-center gap-2">
+                  <label class="text-xs text-slate-500 w-10">締切</label>
+                  <input
+                    type="date"
+                    value="2026-05-15"
+                    class="text-xs border border-slate-300 rounded px-2 py-1 focus:border-blue-500 focus:outline-none"
+                  />
+                  <span class="text-xs text-slate-400">(あと15日)</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <label class="text-xs text-slate-500 w-10 mt-1">メモ</label>
+                  <textarea
+                    class="flex-1 text-xs border border-slate-300 rounded px-2 py-1 min-h-[60px] focus:border-blue-500 focus:outline-none resize-y"
+                    placeholder="メモを追加…"
+                  >
+図の差し替えとスクショ準備</textarea
+                  >
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- ④ 対応中 - 展開 -->
+          <div>
+            <p class="label">④ 対応中 (展開)</p>
+            <article
+              class="bg-sky-50 border border-sky-300 rounded-lg p-3 shadow-md ring-2 ring-sky-100"
+            >
+              <div class="flex items-center gap-2 mb-3">
+                <span class="text-sky-300 cursor-grab">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="9" cy="6" r="1.5" />
+                    <circle cx="9" cy="12" r="1.5" />
+                    <circle cx="9" cy="18" r="1.5" />
+                    <circle cx="15" cy="6" r="1.5" />
+                    <circle cx="15" cy="12" r="1.5" />
+                    <circle cx="15" cy="18" r="1.5" />
+                  </svg>
+                </span>
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full bg-sky-500 border border-sky-500 text-white flex items-center justify-center hover:bg-sky-600 transition"
+                >
+                  <svg
+                    class="w-3 h-3"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <rect x="6" y="5" width="4" height="14" rx="1" />
+                    <rect x="14" y="5" width="4" height="14" rx="1" />
+                  </svg>
+                </button>
+                <input
+                  type="text"
+                  value="PR #123 のレビュー対応"
+                  class="flex-1 min-w-0 text-sm font-medium text-slate-900 bg-transparent border-b border-sky-300 focus:border-sky-500 focus:outline-none px-1 py-0.5"
+                />
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 transition flex items-center justify-center"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+              </div>
+              <div class="ml-9 space-y-2">
+                <div class="flex items-center gap-2">
+                  <label class="text-xs text-slate-600 w-10">締切</label>
+                  <input
+                    type="date"
+                    value="2026-05-02"
+                    class="text-xs border border-sky-300 bg-white rounded px-2 py-1 focus:border-sky-500 focus:outline-none"
+                  />
+                  <span class="text-xs text-slate-500">(あと2日)</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <label class="text-xs text-slate-600 w-10 mt-1">メモ</label>
+                  <textarea
+                    class="flex-1 text-xs border border-sky-300 bg-white rounded px-2 py-1 min-h-[60px] focus:border-sky-500 focus:outline-none resize-y"
+                  >
+@takeshi のコメント対応中。Lint まわりを修正済み、テスト未対応。</textarea
+                  >
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================ -->
+      <!-- セクション 3: 締切による色分け                -->
+      <!-- ============================================ -->
+      <section>
+        <h2 class="text-lg font-semibold text-slate-900 mb-1">
+          3. 締切ステータス (テキスト色 / 枠線色)
+        </h2>
+        <p class="text-sm text-slate-600 mb-4">
+          余裕 = 灰、当日 = オレンジ、超過 = 赤。状態 (対応前/対応中) との二軸で表現。
+        </p>
+        <div class="grid grid-cols-3 gap-4">
+          <!-- 余裕 -->
+          <div>
+            <p class="label">余裕 (黒/灰)</p>
+            <article
+              class="bg-white border border-slate-200 rounded-lg p-3 shadow-sm"
+            >
+              <div class="flex items-center gap-2">
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full border border-slate-300 flex items-center justify-center text-slate-400"
+                >
+                  <svg
+                    class="w-3.5 h-3.5 ml-0.5"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </button>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-slate-900 truncate">
+                    余裕がある
+                  </p>
+                  <p class="text-xs text-slate-700 mt-0.5">
+                    05/20 <span class="text-slate-500">(あと20日)</span>
+                  </p>
+                </div>
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full text-slate-400 hover:text-emerald-600 hover:bg-emerald-50"
+                >
+                  <svg
+                    class="w-4 h-4 mx-auto"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+              </div>
+            </article>
+          </div>
+
+          <!-- 当日 -->
+          <div>
+            <p class="label">当日 (オレンジ)</p>
+            <article
+              class="bg-white border border-orange-300 rounded-lg p-3 shadow-sm"
+            >
+              <div class="flex items-center gap-2">
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full border border-slate-300 flex items-center justify-center text-slate-400"
+                >
+                  <svg
+                    class="w-3.5 h-3.5 ml-0.5"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </button>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-slate-900 truncate">
+                    今日が締切
+                  </p>
+                  <p class="text-xs text-orange-600 font-medium mt-0.5">
+                    04/30 <span class="font-semibold">(今日)</span>
+                  </p>
+                </div>
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full text-slate-400 hover:text-emerald-600 hover:bg-emerald-50"
+                >
+                  <svg
+                    class="w-4 h-4 mx-auto"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+              </div>
+            </article>
+          </div>
+
+          <!-- 超過 -->
+          <div>
+            <p class="label">超過 (赤)</p>
+            <article
+              class="bg-white border border-red-300 rounded-lg p-3 shadow-sm"
+            >
+              <div class="flex items-center gap-2">
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full border border-slate-300 flex items-center justify-center text-slate-400"
+                >
+                  <svg
+                    class="w-3.5 h-3.5 ml-0.5"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </button>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-slate-900 truncate">
+                    締切を過ぎた
+                  </p>
+                  <p class="text-xs text-red-600 font-semibold mt-0.5">
+                    04/25 <span>(5日経過)</span>
+                  </p>
+                </div>
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full text-slate-400 hover:text-emerald-600 hover:bg-emerald-50"
+                >
+                  <svg
+                    class="w-4 h-4 mx-auto"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+              </div>
+            </article>
+          </div>
+        </div>
+        <div class="mt-4 grid grid-cols-3 gap-4">
+          <!-- 対応中 + 当日 -->
+          <div>
+            <p class="label">対応中 × 当日</p>
+            <article
+              class="bg-sky-50 border border-orange-300 rounded-lg p-3 shadow-sm"
+            >
+              <div class="flex items-center gap-2">
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full bg-sky-500 text-white flex items-center justify-center"
+                >
+                  <svg
+                    class="w-3 h-3"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <rect x="6" y="5" width="4" height="14" rx="1" />
+                    <rect x="14" y="5" width="4" height="14" rx="1" />
+                  </svg>
+                </button>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-slate-900 truncate">
+                    対応中で今日締切
+                  </p>
+                  <p class="text-xs text-orange-600 font-medium mt-0.5">
+                    04/30 <span class="font-semibold">(今日)</span>
+                  </p>
+                </div>
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full text-slate-500 hover:text-emerald-600"
+                >
+                  <svg
+                    class="w-4 h-4 mx-auto"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+              </div>
+            </article>
+          </div>
+          <!-- 対応中 + 超過 -->
+          <div>
+            <p class="label">対応中 × 超過</p>
+            <article
+              class="bg-sky-50 border border-red-300 rounded-lg p-3 shadow-sm"
+            >
+              <div class="flex items-center gap-2">
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full bg-sky-500 text-white flex items-center justify-center"
+                >
+                  <svg
+                    class="w-3 h-3"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <rect x="6" y="5" width="4" height="14" rx="1" />
+                    <rect x="14" y="5" width="4" height="14" rx="1" />
+                  </svg>
+                </button>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-slate-900 truncate">
+                    遅れている
+                  </p>
+                  <p class="text-xs text-red-600 font-semibold mt-0.5">
+                    04/25 (5日経過)
+                  </p>
+                </div>
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full text-slate-500"
+                >
+                  <svg
+                    class="w-4 h-4 mx-auto"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+              </div>
+            </article>
+          </div>
+          <div></div>
+        </div>
+      </section>
+
+      <!-- ============================================ -->
+      <!-- セクション 4: D&D 状態                        -->
+      <!-- ============================================ -->
+      <section>
+        <h2 class="text-lg font-semibold text-slate-900 mb-1">
+          4. D&amp;D の見え方
+        </h2>
+        <p class="text-sm text-slate-600 mb-4">
+          ホバーするとドラッグハンドルが表示。ドラッグ中は半透明 + 影で浮かす。
+        </p>
+        <div class="grid grid-cols-3 gap-4">
+          <!-- 通常 -->
+          <div>
+            <p class="label">通常</p>
+            <article
+              class="bg-white border border-slate-200 rounded-lg p-3 shadow-sm"
+            >
+              <div class="flex items-center gap-2">
+                <span class="text-slate-300 opacity-0">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="9" cy="6" r="1.5" />
+                    <circle cx="9" cy="12" r="1.5" />
+                    <circle cx="9" cy="18" r="1.5" />
+                    <circle cx="15" cy="6" r="1.5" />
+                    <circle cx="15" cy="12" r="1.5" />
+                    <circle cx="15" cy="18" r="1.5" />
+                  </svg>
+                </span>
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full border border-slate-300 text-slate-400"
+                >
+                  <svg
+                    class="w-3.5 h-3.5 ml-0.5 mx-auto"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </button>
+                <p class="flex-1 text-sm">通常状態</p>
+              </div>
+            </article>
+          </div>
+          <!-- ホバー -->
+          <div>
+            <p class="label">ホバー (ハンドル可視)</p>
+            <article
+              class="bg-white border border-slate-300 rounded-lg p-3 shadow-md"
+            >
+              <div class="flex items-center gap-2">
+                <span class="text-slate-400 cursor-grab">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="9" cy="6" r="1.5" />
+                    <circle cx="9" cy="12" r="1.5" />
+                    <circle cx="9" cy="18" r="1.5" />
+                    <circle cx="15" cy="6" r="1.5" />
+                    <circle cx="15" cy="12" r="1.5" />
+                    <circle cx="15" cy="18" r="1.5" />
+                  </svg>
+                </span>
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full border border-slate-300 text-slate-400"
+                >
+                  <svg
+                    class="w-3.5 h-3.5 ml-0.5 mx-auto"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </button>
+                <p class="flex-1 text-sm">ホバー中</p>
+              </div>
+            </article>
+          </div>
+          <!-- ドラッグ中 -->
+          <div>
+            <p class="label">ドラッグ中</p>
+            <article
+              class="bg-white border-2 border-blue-400 rounded-lg p-3 opacity-60 shadow-2xl rotate-1"
+            >
+              <div class="flex items-center gap-2">
+                <span class="text-blue-400 cursor-grabbing">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="9" cy="6" r="1.5" />
+                    <circle cx="9" cy="12" r="1.5" />
+                    <circle cx="9" cy="18" r="1.5" />
+                    <circle cx="15" cy="6" r="1.5" />
+                    <circle cx="15" cy="12" r="1.5" />
+                    <circle cx="15" cy="18" r="1.5" />
+                  </svg>
+                </span>
+                <button
+                  class="flex-shrink-0 w-7 h-7 rounded-full border border-slate-300 text-slate-400"
+                >
+                  <svg
+                    class="w-3.5 h-3.5 ml-0.5 mx-auto"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </button>
+                <p class="flex-1 text-sm">移動中</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================ -->
+      <!-- セクション 5: 仕様メモ                       -->
+      <!-- ============================================ -->
+      <section
+        class="bg-white border border-slate-200 rounded-lg p-5 text-sm text-slate-700 leading-relaxed"
+      >
+        <h2 class="text-lg font-semibold text-slate-900 mb-3">仕様メモ</h2>
+        <ul class="list-disc pl-5 space-y-1.5">
+          <li>
+            <strong>状態切替ボタン (左)</strong>: ▶ = 対応前、⏸ = 対応中。クリックで `PATCH /:id/toggle-status`。
+          </li>
+          <li>
+            <strong>完了ボタン (右)</strong>: ✓
+            アイコン。クリックで即削除 (`DELETE /:id`)。確認ダイアログなし (誤操作時は別途 Undo を検討余地)。
+          </li>
+          <li>
+            <strong>カード本体クリック</strong>:
+            折り畳み⇄展開をトグル。ボタン領域はイベント伝播停止。
+          </li>
+          <li>
+            <strong>展開時の編集</strong>:
+            タスク名/締切/メモは onBlur でサーバ保存 (debounce 500ms)。明示的な「保存」ボタンはなし。
+          </li>
+          <li>
+            <strong>ドラッグハンドル</strong>:
+            カードホバー時のみ可視。タッチデバイスでは常時表示を検討。
+          </li>
+          <li>
+            <strong>締切色</strong>: 余裕 (1日以上) = `text-slate-500`、当日 =
+            `text-orange-600` + 枠 `border-orange-300`、超過 = `text-red-600` +
+            枠 `border-red-300`。
+          </li>
+          <li>
+            <strong>背景色</strong>: 対応前 = `bg-white`、対応中 =
+            `bg-sky-50`。状態 × 締切色は枠線で重ねる。
+          </li>
+          <li>
+            <strong>余白</strong>: padding `p-3`、カード間 `gap-2`。トグルボタンは
+            `w-7 h-7` (28px)。
+          </li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>
