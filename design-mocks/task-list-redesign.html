@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task UI Redesign Mocks</title>
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --panel: #ffffff;
+        --line: #d8e0ea;
+        --text: #17212b;
+        --muted: #61758a;
+        --blue: #2b6ef3;
+        --blue-soft: #eaf1ff;
+        --green: #1f9d68;
+        --green-soft: #e8f7ef;
+        --amber: #d97706;
+        --amber-soft: #fff4db;
+        --red: #dc2626;
+        --red-soft: #feecec;
+        --shadow: 0 14px 36px rgba(18, 32, 56, 0.08);
+        --radius: 18px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at top left, #ffffff 0, #f4f7fb 35%),
+          var(--bg);
+        color: var(--text);
+      }
+
+      .page {
+        width: min(1440px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 40px 0 64px;
+      }
+
+      .hero {
+        margin-bottom: 28px;
+      }
+
+      .hero h1 {
+        margin: 0 0 10px;
+        font-size: 34px;
+        line-height: 1.15;
+      }
+
+      .hero p {
+        margin: 0;
+        max-width: 900px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .summary {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin: 22px 0 34px;
+      }
+
+      .summary-card,
+      .concept,
+      .mock-shell,
+      .project-card,
+      .row-card,
+      .tile,
+      .peek-panel,
+      .drawer,
+      .board-column {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+
+      .summary-card {
+        padding: 18px 20px;
+      }
+
+      .summary-card strong {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      .summary-card span {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .concepts {
+        display: grid;
+        gap: 22px;
+      }
+
+      .concept {
+        padding: 24px;
+      }
+
+      .concept-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 18px;
+      }
+
+      .concept-title {
+        display: flex;
+        gap: 14px;
+        align-items: baseline;
+      }
+
+      .concept-no {
+        font-weight: 800;
+        color: var(--blue);
+        font-size: 14px;
+        letter-spacing: 0.08em;
+      }
+
+      .concept h2 {
+        margin: 0 0 6px;
+        font-size: 23px;
+      }
+
+      .concept p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .tags {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .tag {
+        border-radius: 999px;
+        padding: 7px 12px;
+        font-size: 12px;
+        font-weight: 700;
+        background: #eef3f8;
+        color: #36506b;
+      }
+
+      .mock-shell {
+        padding: 20px;
+        overflow: hidden;
+      }
+
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 16px;
+        background: #f8fbff;
+        border: 1px solid #e2eaf3;
+        border-radius: 16px;
+        margin-bottom: 16px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .toolbar .primary {
+        color: var(--text);
+        font-weight: 700;
+      }
+
+      .kanban {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .project-card,
+      .board-column {
+        padding: 14px;
+        background: linear-gradient(180deg, #fbfdff 0%, #f7faff 100%);
+      }
+
+      .project-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .project-head strong,
+      .board-column strong {
+        font-size: 14px;
+      }
+
+      .count {
+        font-size: 12px;
+        color: var(--muted);
+        background: #eef3fa;
+        border-radius: 999px;
+        padding: 5px 9px;
+      }
+
+      .task-stack {
+        display: grid;
+        gap: 12px;
+      }
+
+      .task {
+        border: 1px solid #dfe7f0;
+        background: white;
+        border-radius: 16px;
+        padding: 14px;
+      }
+
+      .task.compact {
+        padding: 12px 14px;
+      }
+
+      .task-row {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+      }
+
+      .status-dot {
+        width: 11px;
+        height: 11px;
+        border-radius: 999px;
+        margin-top: 5px;
+        flex: 0 0 auto;
+      }
+
+      .status-todo { background: #c5d2e1; }
+      .status-doing { background: var(--blue); }
+      .status-risk { background: var(--red); }
+
+      .task-body {
+        min-width: 0;
+        flex: 1;
+      }
+
+      .task-title {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.5;
+        font-weight: 700;
+      }
+
+      .task-title.two-line {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+      }
+
+      .task-meta,
+      .task-memo,
+      .tiny {
+        font-size: 12px;
+        line-height: 1.6;
+      }
+
+      .task-meta {
+        color: var(--muted);
+        margin-top: 6px;
+      }
+
+      .task-memo {
+        margin-top: 8px;
+        color: #43576c;
+        background: #f6f9fc;
+        border-radius: 12px;
+        padding: 9px 10px;
+      }
+
+      .badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .badge {
+        border-radius: 999px;
+        padding: 4px 8px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .badge.memo { background: #edf4ff; color: #2856bd; }
+      .badge.date { background: var(--amber-soft); color: var(--amber); }
+      .badge.risk { background: var(--red-soft); color: var(--red); }
+      .badge.ok { background: var(--green-soft); color: var(--green); }
+
+      .list-layout {
+        display: grid;
+        gap: 12px;
+      }
+
+      .row-card {
+        padding: 14px 16px;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 130px minmax(0, 1fr) 200px 120px 100px;
+        gap: 14px;
+        align-items: center;
+      }
+
+      .section-label {
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+
+      .drawer {
+        margin-top: 12px;
+        padding: 14px 16px;
+        background: #f8fbff;
+      }
+
+      .drawer-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 16px;
+      }
+
+      .split-layout {
+        display: grid;
+        grid-template-columns: 1.45fr 0.95fr;
+        gap: 18px;
+      }
+
+      .peek-layout {
+        display: grid;
+        grid-template-columns: 1.3fr 0.9fr;
+        gap: 18px;
+      }
+
+      .peek-panel {
+        padding: 18px;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+      }
+
+      .peek-panel h3,
+      .tile h3 {
+        margin: 0 0 10px;
+        font-size: 17px;
+      }
+
+      .info-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px dashed #d7e0e9;
+        font-size: 13px;
+      }
+
+      .tiles {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .tile {
+        padding: 16px;
+        min-height: 208px;
+      }
+
+      .tile .task-title {
+        font-size: 15px;
+      }
+
+      .mini-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .pill-btn {
+        border: 1px solid #d6e0eb;
+        border-radius: 999px;
+        padding: 8px 11px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #36506b;
+        background: #fff;
+      }
+
+      .recommend {
+        margin-top: 14px;
+        padding: 12px 14px;
+        border-radius: 14px;
+        font-size: 13px;
+        background: #f0f7ff;
+        color: #22456f;
+      }
+
+      @media (max-width: 1100px) {
+        .summary,
+        .kanban,
+        .split-layout,
+        .peek-layout,
+        .tiles,
+        .row,
+        .drawer-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <h1>タスク一覧 UI リデザインモック 5案</h1>
+        <p>
+          課題は「長いタスク名が一覧で読めない」「メモが普段見えず文脈が弱い」の2点です。そこで、
+          タイトルの視認性・メモの露出・クイック操作・プロジェクト横断の見やすさを軸に、
+          5種類の方向性を並べて比較できるモックを作成しました。
+        </p>
+      </section>
+
+      <section class="summary">
+        <div class="summary-card">
+          <strong>改善の共通方針</strong>
+          <span>タイトルは最低2行まで表示し、1行省略をやめる。メモは本文プレビューかサイド表示で常時参照できるようにする。</span>
+        </div>
+        <div class="summary-card">
+          <strong>操作性の方針</strong>
+          <span>状態変更・完了・ドラッグの優先度を維持しつつ、編集モードに入らなくても内容を読める設計を優先する。</span>
+        </div>
+        <div class="summary-card">
+          <strong>今回のモックの位置づけ</strong>
+          <span>実装前の比較用です。現行のデータ構造を前提に、情報密度と視認性のバランスだけを先に検討しています。</span>
+        </div>
+      </section>
+
+      <section class="concepts">
+        <article class="concept">
+          <div class="concept-header">
+            <div class="concept-title">
+              <span class="concept-no">OPTION 01</span>
+              <div>
+                <h2>2行タイトル + メモプレビューカード</h2>
+                <p>現行カード型を保ちながら、タイトルを2行化し、メモの先頭2〜3行を常時見せる最小変更案です。</p>
+              </div>
+            </div>
+            <div class="tags">
+              <span class="tag">導入しやすい</span>
+              <span class="tag">現行D&amp;D維持</span>
+              <span class="tag">違和感が少ない</span>
+            </div>
+          </div>
+          <div class="mock-shell">
+            <div class="toolbar">
+              <span><span class="primary">タスク</span> / タイトル2行 / メモ常時表示</span>
+              <span>おすすめ: 現状を崩さず改善したい場合</span>
+            </div>
+            <div class="kanban">
+              <section class="project-card">
+                <div class="project-head">
+                  <strong>プロジェクトA</strong>
+                  <span class="count">3 tasks</span>
+                </div>
+                <div class="task-stack">
+                  <div class="task">
+                    <div class="task-row">
+                      <span class="status-dot status-risk"></span>
+                      <div class="task-body">
+                        <p class="task-title two-line">管理画面のタスク一覧で長いタスク名と補足条件が入っても一目で読める表示ルールを整理する</p>
+                        <div class="task-meta">締切 07/02 · 対応前</div>
+                        <div class="task-memo">モバイル幅では2行、デスクトップでは最大3行まで許容。メモの先頭文も一覧で読めるか確認したい。</div>
+                        <div class="badges">
+                          <span class="badge memo">Memo visible</span>
+                          <span class="badge risk">期限近い</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="task compact">
+                    <div class="task-row">
+                      <span class="status-dot status-doing"></span>
+                      <div class="task-body">
+                        <p class="task-title two-line">検索条件の保持ロジックを整理して戻る操作時の体験を安定させる</p>
+                        <div class="task-meta">締切 07/05 · 対応中</div>
+                        <div class="task-memo">再現条件: フィルタ変更→詳細→戻る。状態復元の優先順位を決める。</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <section class="project-card">
+                <div class="project-head">
+                  <strong>プロジェクトB</strong>
+                  <span class="count">2 tasks</span>
+                </div>
+                <div class="task-stack">
+                  <div class="task compact">
+                    <div class="task-row">
+                      <span class="status-dot status-todo"></span>
+                      <div class="task-body">
+                        <p class="task-title two-line">請求CSVの列マッピング仕様を洗い直す</p>
+                        <div class="task-meta">締切 07/12 · 対応前</div>
+                        <div class="task-memo">会計側の列定義が更新されている可能性あり。</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <section class="project-card">
+                <div class="project-head">
+                  <strong>Inbox</strong>
+                  <span class="count">1 task</span>
+                </div>
+                <div class="task-stack">
+                  <div class="task compact">
+                    <div class="task-row">
+                      <span class="status-dot status-todo"></span>
+                      <div class="task-body">
+                        <p class="task-title two-line">週次レビュー用に未整理メモをタスク化する</p>
+                        <div class="task-meta">期限未設定でもメモだけ確認可能</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+          <div class="recommend">長所: 実装コストが低く、今の使い方をほぼ変えずに読みやすさだけ大きく改善できます。</div>
+        </article>
+
+        <article class="concept">
+          <div class="concept-header">
+            <div class="concept-title">
+              <span class="concept-no">OPTION 02</span>
+              <div>
+                <h2>左右分割カード + 情報レール</h2>
+                <p>カード左にタイトルとメモ、右に状態・期限・操作を寄せる案です。本文と操作の視線がぶつかりにくくなります。</p>
+              </div>
+            </div>
+            <div class="tags">
+              <span class="tag">情報整理が強い</span>
+              <span class="tag">視線移動が少ない</span>
+              <span class="tag">デザイン性高め</span>
+            </div>
+          </div>
+          <div class="mock-shell">
+            <div class="toolbar">
+              <span><span class="primary">タスク</span> / 本文と操作の分離</span>
+              <span>おすすめ: 期限や状態も同時に見たい場合</span>
+            </div>
+            <div class="list-layout">
+              <div class="row-card">
+                <div class="split-layout">
+                  <div>
+                    <div class="section-label">Task Content</div>
+                    <p class="task-title">管理画面のタスク一覧で長いタスク名と補足条件が入っても一目で読める表示ルールを整理する</p>
+                    <div class="task-memo">一覧ではメモの冒頭2行を表示。全文はホバーまたは展開で確認。タイトルとメモの階層差をしっかり付ける。</div>
+                    <div class="badges">
+                      <span class="badge memo">UI改善</span>
+                      <span class="badge ok">一覧性向上</span>
+                    </div>
+                  </div>
+                  <div class="peek-panel">
+                    <div class="section-label">Action Rail</div>
+                    <div class="info-list">
+                      <div class="info-row"><span>状態</span><strong>対応中</strong></div>
+                      <div class="info-row"><span>締切</span><strong>07/02</strong></div>
+                      <div class="info-row"><span>担当感</span><strong>今週着手</strong></div>
+                    </div>
+                    <div class="mini-actions">
+                      <button class="pill-btn">開始/停止</button>
+                      <button class="pill-btn">完了</button>
+                      <button class="pill-btn">詳細</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row-card">
+                <div class="split-layout">
+                  <div>
+                    <p class="task-title">検索条件の保持ロジックを整理して戻る操作時の体験を安定させる</p>
+                    <div class="task-memo">詳細画面に遷移して戻った時に、フィルタ・スクロール位置・展開状態のどこまで覚えるかを決める。</div>
+                  </div>
+                  <div class="peek-panel">
+                    <div class="info-list">
+                      <div class="info-row"><span>状態</span><strong>対応前</strong></div>
+                      <div class="info-row"><span>締切</span><strong>07/05</strong></div>
+                      <div class="info-row"><span>優先度</span><strong>中</strong></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="recommend">長所: 長文タイトルでも崩れにくく、メモと操作の役割分担が明快です。カードの整列感も出しやすいです。</div>
+        </article>
+
+        <article class="concept">
+          <div class="concept-header">
+            <div class="concept-title">
+              <span class="concept-no">OPTION 03</span>
+              <div>
+                <h2>リスト行 + 展開ドロワー</h2>
+                <p>一覧性を最優先して、基本は1行リスト、気になるタスクだけ下にドロワーで詳細を開く案です。</p>
+              </div>
+            </div>
+            <div class="tags">
+              <span class="tag">件数に強い</span>
+              <span class="tag">縦に多く見える</span>
+              <span class="tag">業務アプリ寄り</span>
+            </div>
+          </div>
+          <div class="mock-shell">
+            <div class="toolbar">
+              <span><span class="primary">タスク</span> / 高密度リスト</span>
+              <span>おすすめ: タスク数が多いチーム向け</span>
+            </div>
+            <div class="list-layout">
+              <div class="row-card">
+                <div class="row">
+                  <div class="tiny"><strong>プロジェクトA</strong></div>
+                  <div>
+                    <p class="task-title">管理画面のタスク一覧で長いタスク名と補足条件が入っても一目で読める表示ルールを整理する</p>
+                    <div class="tiny" style="color: var(--muted);">冒頭メモ: モバイル幅も考慮して表示ルールを決める</div>
+                  </div>
+                  <div class="badges">
+                    <span class="badge memo">メモあり</span>
+                    <span class="badge risk">期限近い</span>
+                  </div>
+                  <div class="tiny">07/02</div>
+                  <div class="tiny"><strong>展開中</strong></div>
+                </div>
+                <div class="drawer">
+                  <div class="drawer-grid">
+                    <div>
+                      <div class="section-label">Memo</div>
+                      <div class="task-memo">タイトルを省略せず読ませたい。デスクトップでは2〜3行、モバイルでは2行まで。操作ボタンは右固定にして誤タップを減らす。</div>
+                    </div>
+                    <div>
+                      <div class="section-label">Quick Actions</div>
+                      <div class="mini-actions">
+                        <button class="pill-btn">対応中にする</button>
+                        <button class="pill-btn">編集</button>
+                        <button class="pill-btn">完了</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row-card">
+                <div class="row">
+                  <div class="tiny"><strong>プロジェクトB</strong></div>
+                  <div>
+                    <p class="task-title">請求CSVの列マッピング仕様を洗い直す</p>
+                    <div class="tiny" style="color: var(--muted);">冒頭メモ: 会計側の新仕様を確認</div>
+                  </div>
+                  <div class="badges">
+                    <span class="badge ok">安定</span>
+                  </div>
+                  <div class="tiny">07/12</div>
+                  <div class="tiny">閉じる</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="recommend">長所: 多数のタスクを処理する時に強く、スクロール効率が高いです。短期的な運用重視なら有力です。</div>
+        </article>
+
+        <article class="concept">
+          <div class="concept-header">
+            <div class="concept-title">
+              <span class="concept-no">OPTION 04</span>
+              <div>
+                <h2>カンバン + 右ペイン常時プレビュー</h2>
+                <p>一覧は軽く保ちつつ、選択中タスクのタイトル・メモ全文・操作を右ペインに集約する案です。</p>
+              </div>
+            </div>
+            <div class="tags">
+              <span class="tag">文脈が見やすい</span>
+              <span class="tag">詳細確認が速い</span>
+              <span class="tag">PC体験向き</span>
+            </div>
+          </div>
+          <div class="mock-shell">
+            <div class="toolbar">
+              <span><span class="primary">タスク</span> / 選択中タスクの右プレビュー</span>
+              <span>おすすめ: タイトルもメモ全文もよく読む場合</span>
+            </div>
+            <div class="peek-layout">
+              <div class="kanban" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+                <section class="board-column">
+                  <div class="project-head">
+                    <strong>プロジェクトA</strong>
+                    <span class="count">4</span>
+                  </div>
+                  <div class="task-stack">
+                    <div class="task compact" style="border-color: #aac6ff; background: #f6f9ff;">
+                      <p class="task-title two-line">管理画面のタスク一覧で長いタスク名と補足条件が入っても一目で読める表示ルールを整理する</p>
+                      <div class="task-meta">選択中 · 07/02</div>
+                    </div>
+                    <div class="task compact">
+                      <p class="task-title two-line">検索条件の保持ロジックを整理して戻る操作時の体験を安定させる</p>
+                      <div class="task-meta">07/05</div>
+                    </div>
+                  </div>
+                </section>
+                <section class="board-column">
+                  <div class="project-head">
+                    <strong>Inbox</strong>
+                    <span class="count">2</span>
+                  </div>
+                  <div class="task-stack">
+                    <div class="task compact">
+                      <p class="task-title two-line">週次レビュー用に未整理メモをタスク化する</p>
+                      <div class="task-meta">メモ3件</div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              <aside class="peek-panel">
+                <div class="section-label">Selected Task</div>
+                <h3>管理画面のタスク一覧で長いタスク名と補足条件が入っても一目で読める表示ルールを整理する</h3>
+                <div class="badges">
+                  <span class="badge risk">07/02 期限近い</span>
+                  <span class="badge memo">メモ全文表示</span>
+                </div>
+                <div class="task-memo" style="margin-top: 14px;">
+                  現行UIでは 1 行省略により「どの条件の話か」が判別しづらい。右ペインではタイトル全文・メモ全文・期限・状態・操作を同時に見せ、カードは軽い一覧に寄せる。
+                </div>
+                <div class="info-list" style="margin-top: 16px;">
+                  <div class="info-row"><span>プロジェクト</span><strong>プロジェクトA</strong></div>
+                  <div class="info-row"><span>状態</span><strong>対応前</strong></div>
+                  <div class="info-row"><span>期限</span><strong>2026-07-02</strong></div>
+                </div>
+                <div class="mini-actions">
+                  <button class="pill-btn">開始</button>
+                  <button class="pill-btn">編集</button>
+                  <button class="pill-btn">完了</button>
+                </div>
+              </aside>
+            </div>
+          </div>
+          <div class="recommend">長所: 編集しなくても全文が読める体験を最も強く作れます。PC中心ならかなり使いやすくなります。</div>
+        </article>
+
+        <article class="concept">
+          <div class="concept-header">
+            <div class="concept-title">
+              <span class="concept-no">OPTION 05</span>
+              <div>
+                <h2>ノート型タイル + 重要情報ハイライト</h2>
+                <p>タスクを「読むメモ」に近づける案です。文章量が多い仕事向けで、タイトル・メモ・注意点をカード面で完結させます。</p>
+              </div>
+            </div>
+            <div class="tags">
+              <span class="tag">メモ重視</span>
+              <span class="tag">デザイン性高い</span>
+              <span class="tag">企画業務向き</span>
+            </div>
+          </div>
+          <div class="mock-shell">
+            <div class="toolbar">
+              <span><span class="primary">タスク</span> / ノートビュー</span>
+              <span>おすすめ: メモや背景説明を多く持つ業務</span>
+            </div>
+            <div class="tiles">
+              <article class="tile">
+                <div class="badges">
+                  <span class="badge risk">期限近い</span>
+                  <span class="badge memo">背景説明あり</span>
+                </div>
+                <h3>管理画面のタスク一覧で長いタスク名と補足条件が入っても一目で読める表示ルールを整理する</h3>
+                <div class="task-memo">一覧でタイトルの意味が切れないことを最優先。メモは「なぜこのタスクが必要か」が読める粒度まで見せる。</div>
+                <div class="task-meta">プロジェクトA · 07/02 · 対応前</div>
+                <div class="mini-actions">
+                  <button class="pill-btn">進める</button>
+                  <button class="pill-btn">詳細</button>
+                </div>
+              </article>
+              <article class="tile">
+                <div class="badges">
+                  <span class="badge ok">通常</span>
+                </div>
+                <h3>検索条件の保持ロジックを整理して戻る操作時の体験を安定させる</h3>
+                <div class="task-memo">実装より先に「何を戻すべきか」を決める。ユーザーの混乱ポイントをメモに残しておく。</div>
+                <div class="task-meta">プロジェクトA · 07/05 · 対応中</div>
+              </article>
+              <article class="tile">
+                <div class="badges">
+                  <span class="badge memo">調査メモ</span>
+                </div>
+                <h3>請求CSVの列マッピング仕様を洗い直す</h3>
+                <div class="task-memo">外部仕様の変更可能性が高い。カード面で前提情報を見せて判断を早くする。</div>
+                <div class="task-meta">プロジェクトB · 07/12</div>
+              </article>
+              <article class="tile">
+                <div class="badges">
+                  <span class="badge date">未設定</span>
+                </div>
+                <h3>週次レビュー用に未整理メモをタスク化する</h3>
+                <div class="task-memo">思いつきの断片も読み返せるように、一覧でメモの存在感を出す。</div>
+                <div class="task-meta">Inbox</div>
+              </article>
+            </div>
+          </div>
+          <div class="recommend">長所: 「読む価値のあるタスク」に強いです。反面、件数が増えると密度は少し落ちます。</div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>
