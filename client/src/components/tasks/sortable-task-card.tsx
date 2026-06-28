@@ -3,7 +3,19 @@ import { CSS } from "@dnd-kit/utilities";
 import type { Task } from "@simple-task-manager/shared";
 import { TaskCard } from "./task-card";
 
-export function SortableTaskCard({ task }: { task: Task }) {
+interface SortableTaskCardProps {
+  task: Task;
+  isSelected?: boolean;
+  onSelect?: (taskId: number) => void;
+  onDeleted?: (taskId: number) => void;
+}
+
+export function SortableTaskCard({
+  task,
+  isSelected,
+  onSelect,
+  onDeleted,
+}: SortableTaskCardProps) {
   const {
     attributes,
     listeners,
@@ -20,7 +32,14 @@ export function SortableTaskCard({ task }: { task: Task }) {
 
   return (
     <div ref={setNodeRef} style={style} {...attributes}>
-      <TaskCard task={task} dragHandleProps={listeners} isDragging={isDragging} />
+      <TaskCard
+        task={task}
+        dragHandleProps={listeners}
+        isDragging={isDragging}
+        isSelected={isSelected}
+        onSelect={onSelect}
+        onDeleted={onDeleted}
+      />
     </div>
   );
 }
